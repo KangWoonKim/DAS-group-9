@@ -7,6 +7,7 @@ library(tidyverse)
 data <- read_csv("DAProject1.csv")
 
 
+
 obesity_by_time <- data |>
   group_by(Year)|>
   summarise(Obesity_Prevalence = mean(Obese=="Yes") *100 )
