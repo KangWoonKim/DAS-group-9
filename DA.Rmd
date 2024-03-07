@@ -1,0 +1,170 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-03-06"
+---
+
+This report analyses the prevalence of obesity in Scotland, utilizing data from the Scottish Health Surveys conducted between 2008 and 2012. The data encompass socio-economic and lifestyle factors including age, sex, highest educational qualification, daily vegetable and fruit intake, and obesity classification. The main objectives of this analysis are to determine whether the prevalence of obesity has changed over the survey years and to identify any differences in obesity by age, gender, socio-economic status, and lifestyle factors.
+
+```{r}
+# Load necessary libraries
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+# Load the data
+data <- read_csv("DAProject1.csv")
+```
+
+
+```{r}
+data$Sex <- as.factor(data$Sex)
+data$Education <- as.factor(data$Education)
+data$Veg <- as.factor(ifelse(data$Veg == "Yes", 1, 0))
+data$Fruit <- as.factor(ifelse(data$Fruit == "Yes", 1, 0))
+data$Obese <- as.factor(ifelse(data$Obese == "Yes", 1, 0))
+```
+
+```{r}
+# Assuming 'Obese' is a factor with levels 'Yes' and 'No'
+# Calculate the annual prevalence of obesity
+annual_prevalence <- data %>%
+  group_by(Year) %>%
+  summarise(ObesityPrevalence = mean(Obese == "Yes", na.rm = TRUE))
+
+# Plot the trend over years
+ggplot(annual_prevalence, aes(x = Year, y = ObesityPrevalence)) +
+  geom_line(aes(group=1), colour="blue") +
+  geom_point(colour="red") +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(title = "Obesity Prevalence Over the Years", x = "Year", y = "Prevalence (%)")
+
+```
+
+
+
+
+```{r}
+# Logistic regression with Age as a predictor
+model_age <- glm(Obese ~ Age, family = binomial(link = "logit"), data = data)
+summary(model_age)
+
+# Logistic regression with Sex as a predictor
+model_sex <- glm(Obese ~ Sex, family = binomial(link = "logit"), data = data)
+summary(model_sex)
+
+```
+
+```{r}
+# Multiple logistic regression
+model_full <- glm(Obese ~ Age + Sex + Education + Veg + Fruit, family = binomial(link = "logit"), data = data)
+summary(model_full)
+
+```
+
+```{r}
+library(ggplot2)
+data$predicted_prob <- predict(model_age, type = "response")
+ggplot(data, aes(x = Age, y = predicted_prob)) + 
+  geom_point() + 
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  labs(title = "Predicted Probability of Obesity by Age", x = "Age", y = "Predicted Probability")
+
+```
+
+```{r}
+obesity_prevalence <- data %>%
+  group_by(Year) %>%
+  summarise(ObesityPrevalence = mean(Obese == "Yes", na.rm = TRUE))
+
+# Line chart for obesity prevalence over the years
+ggplot(obesity_prevalence, aes(x = Year, y = ObesityPrevalence)) +
+  geom_line() + 
+  geom_point() + # Adding points to the line chart for each year
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(title = "Trend of Obesity Prevalence Over the Years", x = "Year", y = "Obesity Prevalence (%)")
+
+# Obesity by age and gender
+ggplot(data, aes(x = Age, fill = Obese)) +
+  geom_histogram(position = "fill", bins = 30) +
+  facet_wrap(~Sex) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(title = "Obesity by Age and Gender", x = "Age", y = "Percentage")
+
+# Checking for missing values
+sum(is.na(data))
+
+```
+```{r}
+# Exploratory Data Analysis (EDA)
+
+## Load necessary libraries
+library(tidyverse)
+
+## Load the data
+survey_data <- read.csv("DAProject1.csv")
+
+## Preview the data
+head(survey_data)
+
+## Summary statistics
+summary(survey_data)
+
+## Visualize the distribution of obesity over the years
+ggplot(survey_data, aes(x=Year, by=Obese, fill=Obese)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(title="Obesity Prevalence Over the Years", y="Percentage", x="Year")
+
+## Obesity prevalence by gender
+ggplot(survey_data, aes(x=Sex, by=Obese, fill=Obese)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(title="Obesity Prevalence by Gender", y="Percentage", x="Sex")
+
+```
+```{r}
+# Load necessary libraries
+library(tidyverse)
+
+# Assuming survey_data is already loaded and contains the dataset
+
+## Filter data for individuals not obese and obese separately
+not_obese_data <- survey_data %>% filter(Obese == "No")
+obese_data <- survey_data %>% filter(Obese == "Yes")
+
+## Visualize the impact of vegetable intake on those not classified as obese
+ggplot(not_obese_data, aes(x=Veg)) +
+  geom_bar() +
+  labs(title="Vegetable Intake among Individuals Not Classified as Obese", y="Count", x="Vegetable Intake")
+
+## Visualize the impact of vegetable intake on those classified as obese
+ggplot(obese_data, aes(x=Veg)) +
+  geom_bar() +
+  labs(title="Vegetable Intake among Individuals Classified as Obese", y="Count", x="Vegetable Intake")
+
+```
+
+```{r}
+# Formal Analysis
+
+## Obesity prevalence by education level
+ggplot(survey_data, aes(x=Education, fill=Obese)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(title="Obesity Prevalence by Education Level", y="Percentage", x="Education") +
+  theme(axis.text.x = element_text(angle=45, hjust=1))
+
+## Analyze the impact of lifestyle factors on obesity
+ggplot(survey_data, aes(x=Veg, fill=Obese)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(title="Impact of Vegetable Intake on Obesity Prevalence", y="Percentage", x="Vegetable Intake")
+
+ggplot(survey_data, aes(x=Fruit, fill=Obese)) +
+  geom_bar(position="fill") +
+  scale_y_continuous(labels=scales::percent_format()) +
+  labs(title="Impact of Fruit Intake on Obesity Prevalence", y="Percentage", x="Fruit Intake")
+
+```
+

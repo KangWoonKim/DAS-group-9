@@ -1,0 +1,210 @@
+---
+title: "Data Anlaysis Group Project"
+author: "Group 9 (2718740, "your student ID")"
+number-sections: true 
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+  pdf: default
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction {#sec-intro}
+
+Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. This project examines the prevalence and determinants of obesity in Scotland, using data from the Scottish Health Surveys between 2008 and 2012. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis, the study seeks to provide insights into the patterns of obesity across different population segments, offering evidence-based recommendations for public health strategies to mitigate this growing health concern.
+
+In @sec-eda, we will study the relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits. This section aims to uncover preliminary insights and trends within the data through exploratory data analysis techniques.
+
+Moreover, @sec-fda consists of the results from fitting the regression model to the data and evaluating the assumptions of the model. This segment will delve into logistic regression analyses to quantify the impact of different predictors on obesity, providing a more nuanced understanding of its determinants.
+
+The conclusion will be given in @sec-ccls, where we synthesize our findings, discuss the implications for public health policy and practice, and suggest directions for future research. This final section aims to encapsulate the key insights derived from the analysis and underscore their relevance to tackling obesity in Scotland.
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+library(ggplot2)
+library(dplyr)
+library(moderndive)
+library(skimr)
+library(kableExtra)
+library(gridExtra)
+library(MASS)
+library(knitr)
+library(datasets)
+library(broom)
+library(infer)
+library(janitor)
+library(tidyr)
+library(ISLR)
+library(readr)
+library(stats)
+library(sjPlot)
+library(patchwork)
+```
+
+# Exploratory data analysis {#sec-eda}
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+data <- read.csv("DAProject1.csv")
+data <- na.omit(data)
+data$Sex <- as.factor(data$Sex)
+data$Education <- as.factor(data$Education)
+data$Veg <- as.factor(ifelse(data$Veg == "Yes", 1, 0))
+data$Fruit <- as.factor(ifelse(data$Fruit == "Yes", 1, 0))
+data$Obese <- as.factor(ifelse(data$Obese == "Yes", 1, 0))
+
+```
+
+@tbl-summary display the summary statistics(Mean, Standard Deviation, Minimum, Maximum) for Distance and Accuracy analysis. The distribution of both variables is suggested by these summary statistics. We can see that the mean of driving distance(`Distance`) is *287.612* while the mean of fairway accuracy(`Accuracy`) is *63.365.* Also, the middle of 50% of the data for `Distance` lies between *282* and *293.3,* while the middle 50% of `Accuracy` lies between *59.5* to *66.9.*
+
+```{r}
+#| echo: false
+#| label: tbl-summary
+#| warning: false
+#| message: false 
+#| tbl-cap: Summary statistics on driving accuracy and distance.
+
+# Logistic regression with Age as a predictor
+model_age <- glm(Obese ~ Age, family = binomial(link = "logit"), data = data)
+summary(model_age)
+
+# Logistic regression with Sex as a predictor
+model_sex <- glm(Obese ~ Sex, family = binomial(link = "logit"), data = data)
+summary(model_sex)
+```
+
+@tbl-correlation displays the correlation between fairway accuracy and driving distance of PGA, which is `-0.608,`indicating a moderate negative relationship, as the values of one variable increase, the values of the other decrease.
+
+```{r}
+#| echo: false
+#| label: tbl-correlation
+#| tbl-cap: "The correlation between Accuracy and Distance"
+PGA|> 
+  get_correlation(formula = Accuracy ~ Distance) |>
+  gt()
+```
+
+The scatter plot @fig-scat displays the relationship between fairway accuracy and driving distance of PGA. We can see from the plot there, as the Distance increases in yards,the accuracy decrease, also appearing to negative relationship between two variables.
+
+```{r}
+#| echo: false
+#| fig-cap: Relationship between sepal width and sepal length by species.
+#| label: fig-scat
+#| fig-align: center
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| message: false
+#| warning: false
+
+
+ggplot(PGA, aes(x = Distance, y = Accuracy )) +
+  geom_point() +
+  labs(x = "Distance(yards)", y = "Accuracy (%)") +
+  geom_smooth(method = "lm",se = FALSE)
+```
+
+# Formal data analysis {#sec-fda}
+
+Firstly, we fitting the logistic regression model that containing the explanatory variable and response variable as follows:
+
+$$
+y_i = \alpha + \beta x_i + \epsilon_{i}, ~~~~ \epsilon_{i} \sim N(0, \sigma^2), ~~~~ i=1,\ldots,197
+$$
+
+where
+
+-   $y_i$ denotes the accuracy of the $i^{th}$ golfer
+
+-   $x_i$ denotes the distance of the $i^{th}$ golfer
+
+-   $\alpha$ denotes the intercept
+
+-   $\beta$ denotes the slop
+
+-   $\epsilon_{i}$ denotes the $i^{th}$ random error component which are normally distributed with mean zero
+
+-   $\sigma^2$ denotes variance
+
+we can fit the parallel regression lines model as follows @tbl-regmodel:
+
+```{r}
+#| echo: false
+#| label: tbl-regmodel
+#| tbl-cap: Estimates of the regression model coefficients.
+model<- lm(Accuracy ~ Distance, data= PGA2008)
+Coefs<- round(coef(model), 3)
+get_regression_table(model)[, c(1,2,5)] |>
+  gt() |>
+  tab_style(style = cell_text(weight = "bold"),
+            locations = cells_column_labels())
+```
+
+Hence, the regression line is given by :
+
+$$
+\widehat{\mbox{Accuracy}} = 174.925 - 0.388 \cdot Distance
+$$
+
+so $\widehat{\alpha}$ = 174.925 is the intercept coefficient and mean that, for any professional golfer with `Distance = 0` ,their average fairway `Accuracy` would be 174.925. But it is worth notice that `Distance = 0` is not actually possible as `Distance` is ranging between *49* to *80.4 .*
+
+$\widehat{\beta}$ = -0.388 is the slope coefficient associated with the exploratory variable `Distance`, and summarises the relationship between `Accuracy` and `Distance`. That is, as `Distance` increases, `Accuracy` decrease, such that
+
+-   For every 1 unit increase in `Distance`, there is an associated decrease of, on average, *0.388* units of `Accuracy`.
+
+@fig-resids displays the residuals versus Distance and the fitted values， which aim yo access the fit of the model by looking at the scatterplots of the residuals against the fitted values. We can see the assumptions that the residuals have mean zero and constant variance for all values of the explanatory variable (`Distance`) seem to hold. The fact that there is an equitable distribution of points both above and below the zero line suggests that the residuals have a mean of zero. Additionally, the scattering of the dots is consistent for all values of Distance, and the residuals show no sign of systematic structure.(i don't like her)
+
+```{r}
+#| echo: false
+#| 
+regression.points <- get_regression_points(model)
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Residuals versus the distance(left) and the fitted values (right) .
+#| label: fig-resids
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+
+p1 <- ggplot(regression.points, aes(x = Distance, y = residual)) +
+      geom_point() +
+      labs(x = "Distance (in yards)", y = "Residual") +
+      geom_hline(yintercept = 0, col = "blue", linewidth = 1) 
+
+p2 <- ggplot(regression.points, aes(x = Accuracy_hat, y = residual)) +
+      geom_point() +
+      labs(x = "Fitted values", y = "Residual") +
+      geom_hline(yintercept = 0, col = "blue", linewidth = 1) 
+
+grid.arrange(p1, p2, ncol=2)
+
+```
+
+Finally, let's plot histograms of the residuals to assess whether they are normally distributed with mean zero. Let see @fig-residhist, this shows that the residuals have a zero centre and seem to be bell-shaped. It seems reasonable, therefore, to assume that the residuals are normally distributed and have a zero mean.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-residhist
+#| fig-cap: Histograms of the residuals
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+
+
+ggplot(regression.points, aes(x = residual)) +
+      geom_histogram(color = "white") +
+      labs(x = "Residual") 
+```
+
+# Conclusions {#sec-ccls}
+
+Accuracy and distance are negative related
