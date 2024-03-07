@@ -9,7 +9,7 @@ data <- read_csv("DAProject1.csv")
 
 obesity_by_time <- data |>
   group_by(Year)|>
-  summarise(Obesity_Prevalence = mean(Obese=="Yes"))
+  summarise(Obesity_Prevalence = mean(Obese=="Yes") *100 )
 
 ggplot(obesity_by_time, aes(x=Year, y=Obesity_Prevalence))+
   geom_line()
