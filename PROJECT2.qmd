@@ -1,6 +1,7 @@
 ---
 title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys of 2008 and 2012"
 author: "Your NAME goes here"
+author: "Group 9"
 number-sections: true
 format: 
   html:
