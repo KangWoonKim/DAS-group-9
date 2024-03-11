@@ -1,0 +1,378 @@
+---
+title: "Data Anlaysis Group Project"
+author: "Group 9 (2718740, "your student ID")"
+number-sections: true 
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+  pdf: default
+editor_options: 
+  chunk_output_type: console
+---
+
+# Introduction {#sec-intro}
+
+Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. This project examines the prevalence and determinants of obesity in Scotland, using data from the Scottish Health Surveys between 2008 and 2012. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis, the study seeks to provide insights into the patterns of obesity across different population segments, offering evidence-based recommendations for public health strategies to mitigate this growing health concern.
+
+In @sec-eda, we will study the relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits. This section aims to uncover preliminary insights and trends within the data through exploratory data analysis techniques.
+
+Moreover, @sec-fda consists of the results from fitting the regression model to the data and evaluating the assumptions of the model. This segment will delve into logistic regression analyses to quantify the impact of different predictors on obesity, providing a more nuanced understanding of its determinants.
+
+The conclusion will be given in @sec-ccls, where we synthesize our findings, discuss the implications for public health policy and practice, and suggest directions for future research. This final section aims to encapsulate the key insights derived from the analysis and underscore their relevance to tackling obesity in Scotland.
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+library(ggplot2)
+library(dplyr)
+library(moderndive)
+library(skimr)
+library(kableExtra)
+library(gridExtra)
+library(gapminder)
+library(MASS)
+library(knitr)
+library(datasets)
+library(broom)
+library(infer)
+library(janitor)
+library(tidyr)
+library(ISLR)
+library(readr)
+library(stats)
+library(sjPlot)
+library(patchwork)
+```
+
+# Exploratory data analysis {#sec-eda}
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+
+data <- read_csv("DAProject1.csv")
+data <- na.omit(data)
+
+data$Obese <- as.factor(data$Obese)
+data$Sex <- as.factor(data$Sex)
+data$Education <- as.factor(data$Education)
+data$Veg <- as.factor(data$Veg)
+data$Fruit <- as.factor(data$Fruit)
+
+
+```
+
+@tbl-obesity_by_factors indicates that
+
+
+The barplot @fig-bar displays the proportion of the Obesity prevalence over the factors, such as `Year`,`Age`, `Sex`,`Education`,`Veg` and `Fruit.
+
+```{r}
+#| echo: false
+#| label: tbl-obesity_by_factors
+#| warning: false
+#| message: false 
+#|tab-cap: obesity prevalence of Scotland 2008 to 2012.
+obesity_prevalence <- data %>%
+  group_by(Year) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_prevalence_long <- pivot_longer(obesity_prevalence, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+obesity_Age <- data %>%
+  group_by(Age) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_age_long <- pivot_longer(obesity_Age, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+
+obesity_Sex <- data %>%
+  group_by(Sex) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_Sex_long <- pivot_longer(obesity_Sex, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+
+obesity_Edu <- data %>%
+  group_by(Education) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_Edu_long <- pivot_longer(obesity_Edu, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+
+obesity_Veg <- data %>%
+  group_by(Veg) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_Veg_long <- pivot_longer(obesity_Veg, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+obesity_Fruit <- data %>%
+  group_by(Fruit) %>%
+  summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
+            Obese_No = sum(Obese == "No") / n() * 100)
+obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+
+
+obesity_by_year <- data %>%
+  group_by(Year) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_year)
+
+data$Age_Group <- cut(data$Age, breaks=c(0, 18, 30, 40, 50, 60, 70,80,90,Inf), labels=c("0-18", "19-30", "31-40", "41-50", "51-60", "60-70","70-80","80-90","90+"))
+obesity_by_age_group <- data %>%
+  group_by(Age_Group) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_age_group)
+
+obesity_by_sex <- data %>%
+  group_by(Sex) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_sex)
+
+obesity_by_education <- data %>%
+  group_by(Education) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_education)
+
+obesity_by_veg <- data %>%
+  group_by(Veg) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_veg)
+
+obesity_by_fruit <- data %>%
+  group_by(Fruit) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+print(obesity_by_fruit)
+
+
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Scotland's Obesity prevalence over the factors
+#| label: fig-bar
+#| fig-align: center
+#| fig-width: 4.5
+#| fig-height: 3.5
+#| message: false
+#| warning: false
+
+# Plot 
+p1<- ggplot(obesity_prevalence_long, aes(x = Year, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Year",
+       x = "Year",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot
+p2<-ggplot(obesity_age_long, aes(x = Age, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Age",
+       x = "Age",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p3<-ggplot(obesity_Sex_long, aes(x = Sex, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Sex",
+       x = "Sex",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p4<- ggplot(obesity_Edu_long, aes(x = Education, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Education",
+       x = "Education",
+       y = "Percentage (%)",
+       fill = "Obesity Status")+
+  theme(axis.text.x = element_text(size = 2))
+
+# Plot 
+p5<-ggplot(obesity_Veg_long, aes(x = Veg, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Veg",
+       x = "Veg",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p6<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Fruit",
+       x = "Fruit",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+grid.arrange(p1,p2,p3,p4,p5,p6, ncol=2)
+
+```
+
+@tbl-correlation 
+
+```{r}
+#| echo: false
+#| label: tbl-correlation
+#| tbl-cap: "The correlation between Accuracy and Distance"
+
+
+
+```
+
+
+
+
+# Formal data analysis {#sec-fda}
+
+Firstly, we fitting the logistic regression model since we get binary outcome of obese_yes or obese_no.
+Equation containing the explanatory variable and response variable as follows:
+
+$$
+\ \log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 Age(x_1) + \beta_2 Sex(x_2) + \beta_3 Education(x_3)+\beta_4Veg(x_4) + \beta_5 Fruit(x_5) + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
+$$
+
+where
+
+-   $p$ denotes the probability of the outcome being obese (outcome 1)
+
+-   $\beta_0$ denotes the intercept
+
+-   $\beta_1 , \cdot\cdot\cdot,\beta_5$ denotes the coefficients of the predictor variables
+
+-   $\epsilon$ denotes random error component which are normally distributed with mean zero
+
+-   $\sigma^2$ denotes variance
+
+we can fit the logistic regression model as follows @tbl-regmodel:
+
+```{r}
+#| echo: false
+#| label: tbl-regmodel1
+#| tbl-cap: Estimates of the regression model coefficients.
+
+obesity_by_factors <- data |>
+  dplyr::select(Obese, Age, Sex, Education, Veg, Fruit)
+
+model_factors <- logistic_reg() |>
+  set_engine("glm") |>
+  fit(Obese ~ Age + Sex + Education + Veg + Fruit, data =obesity_by_factors) |>
+  extract_fit_engine()
+
+model_factors |>
+  summary()
+
+```
+
+from the `model_factors` we observe that `SexMale` and `FruitYes` are not significant parameters since the p-value is greater than 0.05 . Hence we can make new regression model without those two factors.
+
+```{r}
+#| echo: false
+#| label: tbl-regmodel2
+#| tbl-cap: Estimates of the regression model coefficients.
+
+model_factors2 <- logistic_reg() |>
+  set_engine("glm") |>
+  fit(Obese ~ Age + Education + Veg , data =obesity_by_factors) |>
+  extract_fit_engine()
+
+model_factors2 |>
+  summary()
+
+```
+
+Hence, the regression line is given by :
+
+$$
+\ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
+$$
+
+where p is probability of being obese and 1-p is probability of being not obese. Hence the log-odds of the being Obese increase by 0.012 for every unit increase in `age`. This provides us with a point estimate of how the log-odds changes with age, however, we are also interested in producing a 95% confidence interval for these log-odds. This is done follow @tbl-confidenceinterval
+
+
+
+
+```{r}
+#| echo: false
+#| fig-cap: Residuals versus the distance(left) and the fitted values (right) .
+#| label: fig-resids
+#| fig-width: 5
+#| fig-height: 3
+#| fig-align: center
+
+mod.factors.coef.logodds <- model_factors |>
+  summary()|>
+  coef()
+
+mod.factors.coef.logodds
+
+Age.logodds.lower <- (mod.factors.coef.logodds["Age", "Estimate"]- 1.96 * mod.factors.coef.logodds["Age", "Std. Error"])
+Age.logodds.lower
+Age.logodds.upper <- (mod.factors.coef.logodds["Age", "Estimate"] + 1.96 * mod.factors.coef.logodds["Age", "Std. Error"])
+Age.logodds.upper
+
+Edu.higher.logodds.lower <- (mod.factors.coef.logodds["EducationHigher grade or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationHigher grade or equiv", "Std. Error"])
+Edu.higher.logodds.lower
+Edu.higher.logodds.upper <- (mod.factors.coef.logodds["EducationHigher grade or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationHigher grade or equiv", "Std. Error"])
+Edu.higher.logodds.upper
+
+Edu.HNC.logodds.lower <- (mod.factors.coef.logodds["EducationHNC/D or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationHNC/D or equiv", "Std. Error"])
+Edu.HNC.logodds.lower
+Edu.HNC.logodds.upper <- (mod.factors.coef.logodds["EducationHNC/D or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationHNC/D or equiv", "Std. Error"])
+Edu.HNC.logodds.upper
+
+Edu.no.logodds.lower <- (mod.factors.coef.logodds["EducationNo qualifications", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationNo qualifications", "Std. Error"])
+Edu.no.logodds.lower
+Edu.no.logodds.upper <- (mod.factors.coef.logodds["EducationNo qualifications", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationNo qualifications", "Std. Error"])
+Edu.no.logodds.upper
+
+Edu.other.logodds.lower <- (mod.factors.coef.logodds["EducationOther school level", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationOther school level", "Std. Error"])
+Edu.other.logodds.lower
+Edu.other.logodds.upper <- (mod.factors.coef.logodds["EducationOther school level", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationOther school level", "Std. Error"])
+Edu.other.logodds.upper
+
+Edu.standard.logodds.lower <- (mod.factors.coef.logodds["EducationStandard grade or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationStandard grade or equiv", "Std. Error"])
+Edu.standard.logodds.lower
+Edu.standard.logodds.upper <- (mod.factors.coef.logodds["EducationStandard grade or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationStandard grade or equiv", "Std. Error"])
+Edu.standard.logodds.upper
+
+Veg.logodds.lower <- (mod.factors.coef.logodds["VegYes", "Estimate"]- 1.96 * mod.factors.coef.logodds["VegYes", "Std. Error"])
+Veg.logodds.lower
+Veg.logodds.upper <- (mod.factors.coef.logodds["VegYes", "Estimate"] + 1.96 * mod.factors.coef.logodds["VegYes", "Std. Error"])
+Veg.logodds.upper
+
+```
+
+Hence the point estimate for the log-odds are 0.01, 0.15,
+
+This can be displayed graphically @fig-log_odds
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-log_odds
+#| fig-cap: Log odds of each parameter
+#| fig-width: 4
+#| fig-height: 3
+#| fig-align: center
+plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE)
+```
+
+
+
+
+
+# Conclusions {#sec-ccls}
+
+Accuracy and distance are negative related
