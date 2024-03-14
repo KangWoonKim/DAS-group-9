@@ -338,7 +338,13 @@ model_factors <- logistic_reg() |>
   fit(Obese ~ Age + Sex + Education + Veg + Fruit, data =obesity_by_factors) |>
   extract_fit_engine()
 
-kable(x=summary(model_factors)$coefficients[,c(1,4)], col.names = c("Estimate","p - values"))
+dataframeone <- data.frame(
+  Groups = c( "Intercept", "Age","Sex (Male)","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake", "Fruit intake"),
+  Estimates = summary(model_factors)$coefficients[,1],
+  pvalues = summary(model_factors)$coefficients[,4]
+)
+
+kable(dataframeone, row.names = FALSE)
 
 ```
 
@@ -359,9 +365,16 @@ AIC <- stepAIC(model_factors)
 #| echo: false
 #| label: tbl-regmodel2
 #| tbl-cap: Estimates of the regression model coefficients.
-kable(x=summary(AIC)$coefficients[,c(1,4)], col.names = c("Estimate","p - values"))
-Hence, the regression line is given by :
+dataframe <- data.frame(
+  Groups = c( "Intercept", "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
+  Estimates = summary(AIC)$coefficients[,1],
+  pvalues = summary(AIC)$coefficients[,4]
+)
+
+kable(dataframe, row.names = FALSE)
 ```
+Hence, the regression line is given by :
+
 $$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
@@ -421,7 +434,7 @@ Veg.logodds.upper <- (mod.factors.coef.logodds["VegYes", "Estimate"] + 1.96 * mo
 
 # Store the results in a data frame
 log_odds_ci <- data.frame(
-  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetarian"),
+  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
   ci_low = c(Age.logodds.lower,Edu.higher.logodds.lower,Edu.HNC.logodds.lower,Edu.no.logodds.lower,Edu.other.logodds.lower, Edu.standard.logodds.lower,Veg.logodds.lower),
   ci_up = c(Age.logodds.upper, Edu.higher.logodds.upper, Edu.HNC.logodds.upper, Edu.no.logodds.upper,Edu.other.logodds.upper, Edu.standard.logodds.upper, Veg.logodds.upper)
 )
@@ -450,7 +463,7 @@ plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds
 
 # Store the results in a data frame
 odds_ci <- data.frame(
-  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetarian"),
+  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
   ci_low = c(exp(Age.logodds.lower),exp(Edu.higher.logodds.lower),exp(Edu.HNC.logodds.lower),exp(Edu.no.logodds.lower),exp(Edu.other.logodds.lower), exp(Edu.standard.logodds.lower),exp(Veg.logodds.lower)),
   ci_up = c(exp(Age.logodds.upper), exp(Edu.higher.logodds.upper), exp(Edu.HNC.logodds.upper), exp(Edu.no.logodds.upper),exp(Edu.other.logodds.upper), exp(Edu.standard.logodds.upper), exp(Veg.logodds.upper))
 )
@@ -479,7 +492,7 @@ plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis
 #| label: tbl-pred_age
 #| tbl-cap: Predicted probabilities of obesity by Age
 
-predict(model_factors, type= "response")
+pred <- predict(model_factors, type= "response")
 ```
 
 
