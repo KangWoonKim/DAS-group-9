@@ -299,7 +299,7 @@ kable(obesity_by_fruit)
 #| message: false
 #| warning: false
 
-p6
+p5
 ```
 
 
@@ -323,7 +323,7 @@ where
 
 -   $\sigma^2$ denotes variance
 
-we can fit the logistic regression model as follows @tbl-regmodel:
+we can fit the logistic regression model as follows @tbl-regmodel1:
 
 ```{r}
 #| echo: false
@@ -338,7 +338,7 @@ model_factors <- logistic_reg() |>
   fit(Obese ~ Age + Sex + Education + Veg + Fruit, data =obesity_by_factors) |>
   extract_fit_engine()
 
-summary(model_factors)
+kable(x=summary(model_factors)$coefficients[,c(1,4)], col.names = c("Estimate","p - values"))
 
 ```
 
@@ -349,17 +349,19 @@ Thus, we can make new regression model without those two factors.
 
 ```{r}
 #| echo: false
-#| label: tbl-regmodel2
-#| tbl-cap: Estimates of the regression model coefficients.
+#| output: false
 
 
 AIC <- stepAIC(model_factors)
-summary(AIC)
 
 ```
-
+```{r}
+#| echo: false
+#| label: tbl-regmodel2
+#| tbl-cap: Estimates of the regression model coefficients.
+kable(x=summary(AIC)$coefficients[,c(1,4)], col.names = c("Estimate","p - values"))
 Hence, the regression line is given by :
-
+```
 $$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
