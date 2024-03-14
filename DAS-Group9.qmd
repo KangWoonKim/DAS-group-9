@@ -171,7 +171,7 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
 
 
 ```
-@tbl-obe_year indicates that the lowest value recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year. 
+@tbl-obe_year indicates that the lowest percentage of subjects with obesity recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year. 
 
 ```{r}
 #| echo: false
@@ -348,7 +348,7 @@ kable(dataframeone, row.names = FALSE)
 
 ```
 
-from the `model_factors` we observe that `SexMale` and `FruitYes` are not significant parameters since the p-values are greater than 0.05 . 
+from the `model_factors` we observe that `Sex (Male)` and `Fruit intake` are not significant parameters since the p-values are greater than 0.05 . 
 So, we use stepAIC function to find a better model.
 
 Thus, we can make new regression model without those two factors.
@@ -381,12 +381,7 @@ $$
 
 where p is probability of being obese and 1-p is probability of being not obese. Hence the log-odds of the being Obese increase by 0.012 for every unit increase in `age`. This provides us with a point estimate of how the log-odds changes with age.
 
-However, we are also interested in producing a 95% confidence interval for these log-odds. This is done follow @tbl-confidenceinterval
-
-we could check this by visually (@fig-log_odds) seeing that confidence interval for the each factors of the log-odds.
-
-
-This can be displayed graphically @fig-log_odds
+However, we are also interested in producing a 95% confidence interval for these log-odds. These intervals are shown in @tbl-the_log_odds:
 
 ```{r}
 #| echo: false
@@ -435,14 +430,14 @@ Veg.logodds.upper <- (mod.factors.coef.logodds["VegYes", "Estimate"] + 1.96 * mo
 # Store the results in a data frame
 log_odds_ci <- data.frame(
   groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
+  lodds = summary(AIC)$coefficients[2:8,1],
   ci_low = c(Age.logodds.lower,Edu.higher.logodds.lower,Edu.HNC.logodds.lower,Edu.no.logodds.lower,Edu.other.logodds.lower, Edu.standard.logodds.lower,Veg.logodds.lower),
   ci_up = c(Age.logodds.upper, Edu.higher.logodds.upper, Edu.HNC.logodds.upper, Edu.no.logodds.upper,Edu.other.logodds.upper, Edu.standard.logodds.upper, Veg.logodds.upper)
 )
 
-kable(log_odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the log odds", format="pipe")
+kable(log_odds_ci, col.names = c("Groups", "Log-odds", "confidence interval low boundary", "confidence interval upper boundary"), caption = "Confidence interval of the log odds", format="pipe", row.names = FALSE)
 ```
-
-
+We can see these log-odds intervals visually in @fig-log_odds:
 ```{r}
 #| echo: false
 #| message: false
@@ -452,9 +447,10 @@ kable(log_odds_ci, col.names = c("Groups", "confidence interval low boundary", "
 #| fig-align: center
 
 
-plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
+#plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
+plot_model(AIC, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
 ```
-
+From this output and figure we can see that `Age` and all `Education` variables have greater odds of association with the obesity response variable, however whether the person consumes the recommended amount of vegetables has lower odds of association with obesity rates.
 
 ```{r}
 #| echo: false
@@ -481,7 +477,8 @@ kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "conf
 #| label: fig-odds
 #| fig-cap: odds of each parameter
 #| fig-align: center
-plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
+plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
+#plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
 ```
 
 @fig-odds shows odds of each values
