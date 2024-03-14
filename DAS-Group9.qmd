@@ -1,6 +1,6 @@
 ---
-title: "Data Anlaysis Group Project"
-author: "Group 9 (2718740, "your student ID")"
+title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys of 2008 and 2012"
+author: "Group 9 (2718740K Kyle Kim)"
 number-sections: true 
 format: 
   html:
@@ -14,6 +14,10 @@ editor_options:
 # Introduction {#sec-intro}
 
 Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. This project examines the prevalence and determinants of obesity in Scotland, using data from the Scottish Health Surveys between 2008 and 2012. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis, the study seeks to provide insights into the patterns of obesity across different population segments, offering evidence-based recommendations for public health strategies to mitigate this growing health concern.
+
+Obesity is a serious health concern to those it involves. Scotland has the highest obesity rate in the UK in addition to having one of the highest in the developed world which clearly emphasises the significance of the problem. In terms of the effects high obesity rates can have on Scotland, there are many including increased mortality rates, increased healthcare costs and less people in work which negatively impacts the economy. The Scottish health surveys from 2008 and 2012 collected data from individuals regarding their Age, Sex, Education, Body Mass Index (BMI) and whether they consumed the recommended daily fruit and vegetable intake. In this report, we will be investigating whether the prevalence of obesity in Scotland between 2008 and 2012 has changed. Additionally, whether the obesity status of individuals is effected differently in relation to their age, gender, socio-economic status or lifestyle factors.
+
+Background, How the data are collected The aim of this project
 
 In @sec-eda, we will study the relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits. This section aims to uncover preliminary insights and trends within the data through exploratory data analysis techniques.
 
@@ -44,6 +48,7 @@ library(readr)
 library(stats)
 library(sjPlot)
 library(patchwork)
+library(tidymodels)
 ```
 
 # Exploratory data analysis {#sec-eda}
@@ -67,15 +72,12 @@ data$Fruit <- as.factor(data$Fruit)
 
 @tbl-obesity_by_factors indicates that
 
-
-The barplot @fig-bar displays the proportion of the Obesity prevalence over the factors, such as `Year`,`Age`, `Sex`,`Education`,`Veg` and `Fruit.
+The barplot @fig-bar displays the proportion of the Obesity prevalence over the factors, such as `Year`,`Age`, `Sex`,`Education`,`Veg` and `Fruit`.
 
 ```{r}
-#| echo: false
-#| label: tbl-obesity_by_factors
 #| warning: false
 #| message: false 
-#|tab-cap: obesity prevalence of Scotland 2008 to 2012.
+#| echo: false 
 obesity_prevalence <- data %>%
   group_by(Year) %>%
   summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
@@ -114,40 +116,67 @@ obesity_Fruit <- data %>%
   summarise(Obese_Yes = sum(Obese == "Yes") / n() * 100,
             Obese_No = sum(Obese == "No") / n() * 100)
 obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
+```
 
-
+```{r}
+#| echo: false
+#| label: tbl-obe_year
+#| tbl-cap: prevalence of obesity over the year 2008 - 2012
 obesity_by_year <- data %>%
   group_by(Year) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_year)
+kable(obesity_by_year)
+```
 
+```{r}
+#| echo: false
+#| label: tbl-obe_Age
+#| tbl-cap: Obesity percentage table by age group
 data$Age_Group <- cut(data$Age, breaks=c(0, 18, 30, 40, 50, 60, 70,80,90,Inf), labels=c("0-18", "19-30", "31-40", "41-50", "51-60", "60-70","70-80","80-90","90+"))
 obesity_by_age_group <- data %>%
   group_by(Age_Group) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_age_group)
+kable(obesity_by_age_group)
+```
 
+```{r}
+#| echo: false
+#| label: tbl-obe_sex
+#| tbl-cap: Obesity percentage table by gender
 obesity_by_sex <- data %>%
   group_by(Sex) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_sex)
+kable(obesity_by_sex)
+```
 
+```{r}
+#| echo: false
+#| label: tbl-obe_edu
+#| tbl-cap:  Obesity percentage table by education
 obesity_by_education <- data %>%
   group_by(Education) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_education)
+kable(obesity_by_education)
+```
 
+```{r}
+#| echo: false
+#| label: tbl-ob_veg
+#| tbl-cap:  Obesity percentage table by vegetarian
 obesity_by_veg <- data %>%
   group_by(Veg) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_veg)
+kable(obesity_by_veg)
+```
 
+```{r}
+#| echo: false
+#| label: tbl-ob_fruit
+#| tbl-cap:  Obesity percentage table by fruit
 obesity_by_fruit <- data %>%
   group_by(Fruit) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-print(obesity_by_fruit)
-
-
+kable(obesity_by_fruit)
 ```
 
 ```{r}
@@ -155,8 +184,6 @@ print(obesity_by_fruit)
 #| fig-cap: Scotland's Obesity prevalence over the factors
 #| label: fig-bar
 #| fig-align: center
-#| fig-width: 4.5
-#| fig-height: 3.5
 #| message: false
 #| warning: false
 
@@ -215,28 +242,73 @@ p6<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
        y = "Percentage (%)",
        fill = "Obesity Status")
 
-grid.arrange(p1,p2,p3,p4,p5,p6, ncol=2)
+#grid.arrange(p1,p2,p3,p4,p5,p6, ncol=2)
+p1
+
 
 ```
-
-@tbl-correlation 
 
 ```{r}
 #| echo: false
-#| label: tbl-correlation
-#| tbl-cap: "The correlation between Accuracy and Distance"
+#| fig-cap: Percentage of obese people in Scotland by age group
+#| label: fig-bar_age
+#| fig-align: center
+#| message: false
+#| warning: false
+
+p2
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Gender
+#| label: fig-bar_sex
+#| fig-align: center
+#| message: false
+#| warning: false
+
+p3
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Education
+#| label: fig-bar_edu
+#| fig-align: center
+#| message: false
+#| warning: false
+
+p4
+```
+
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Vegetarian
+#| label: fig-bar_Veg
+#| fig-align: center
+#| message: false
+#| warning: false
 
 
-
+p5
 ```
 
 
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Fruit
+#| label: fig-bar_Fruit
+#| fig-align: center
+#| message: false
+#| warning: false
+
+p6
+```
 
 
 # Formal data analysis {#sec-fda}
 
-Firstly, we fitting the logistic regression model since we get binary outcome of obese_yes or obese_no.
-Equation containing the explanatory variable and response variable as follows:
+Next, we formally analyse the data by considering objective in turn. Firstly, we fitting the logistic regression model since we get binary outcome of obese_yes or obese_no. Equation containing the explanatory variable and response variable as follows:
 
 $$
 \ \log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 Age(x_1) + \beta_2 Sex(x_2) + \beta_3 Education(x_3)+\beta_4Veg(x_4) + \beta_5 Fruit(x_5) + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
@@ -269,25 +341,23 @@ model_factors <- logistic_reg() |>
   fit(Obese ~ Age + Sex + Education + Veg + Fruit, data =obesity_by_factors) |>
   extract_fit_engine()
 
-model_factors |>
-  summary()
+summary(model_factors)
 
 ```
 
-from the `model_factors` we observe that `SexMale` and `FruitYes` are not significant parameters since the p-value is greater than 0.05 . Hence we can make new regression model without those two factors.
+from the `model_factors` we observe that `SexMale` and `FruitYes` are not significant parameters since the p-values are greater than 0.05 . 
+So, we use stepAIC function to find a better model.
+
+Thus, we can make new regression model without those two factors.
 
 ```{r}
 #| echo: false
 #| label: tbl-regmodel2
 #| tbl-cap: Estimates of the regression model coefficients.
 
-model_factors2 <- logistic_reg() |>
-  set_engine("glm") |>
-  fit(Obese ~ Age + Education + Veg , data =obesity_by_factors) |>
-  extract_fit_engine()
 
-model_factors2 |>
-  summary()
+AIC <- stepAIC(model_factors)
+summary(AIC)
 
 ```
 
@@ -297,65 +367,69 @@ $$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
 
-where p is probability of being obese and 1-p is probability of being not obese. Hence the log-odds of the being Obese increase by 0.012 for every unit increase in `age`. This provides us with a point estimate of how the log-odds changes with age, however, we are also interested in producing a 95% confidence interval for these log-odds. This is done follow @tbl-confidenceinterval
+where p is probability of being obese and 1-p is probability of being not obese. Hence the log-odds of the being Obese increase by 0.012 for every unit increase in `age`. This provides us with a point estimate of how the log-odds changes with age.
+
+However, we are also interested in producing a 95% confidence interval for these log-odds. This is done follow @tbl-confidenceinterval
+
+we could check this by visually (@fig-log_odds) seeing that confidence interval for the each factors of the log-odds.
 
 
-
+This can be displayed graphically @fig-log_odds
 
 ```{r}
 #| echo: false
-#| fig-cap: Residuals versus the distance(left) and the fitted values (right) .
-#| label: fig-resids
-#| fig-width: 5
-#| fig-height: 3
-#| fig-align: center
+#| label: tbl-the_log_odds
+#| tbl-cap: Confidence interval of the Log Odds 
 
-mod.factors.coef.logodds <- model_factors |>
+mod.factors.coef.logodds <- AIC |>
   summary()|>
   coef()
 
-mod.factors.coef.logodds
-
 Age.logodds.lower <- (mod.factors.coef.logodds["Age", "Estimate"]- 1.96 * mod.factors.coef.logodds["Age", "Std. Error"])
-Age.logodds.lower
+
 Age.logodds.upper <- (mod.factors.coef.logodds["Age", "Estimate"] + 1.96 * mod.factors.coef.logodds["Age", "Std. Error"])
-Age.logodds.upper
+
 
 Edu.higher.logodds.lower <- (mod.factors.coef.logodds["EducationHigher grade or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationHigher grade or equiv", "Std. Error"])
-Edu.higher.logodds.lower
+
 Edu.higher.logodds.upper <- (mod.factors.coef.logodds["EducationHigher grade or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationHigher grade or equiv", "Std. Error"])
-Edu.higher.logodds.upper
+
 
 Edu.HNC.logodds.lower <- (mod.factors.coef.logodds["EducationHNC/D or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationHNC/D or equiv", "Std. Error"])
-Edu.HNC.logodds.lower
+
 Edu.HNC.logodds.upper <- (mod.factors.coef.logodds["EducationHNC/D or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationHNC/D or equiv", "Std. Error"])
-Edu.HNC.logodds.upper
+
 
 Edu.no.logodds.lower <- (mod.factors.coef.logodds["EducationNo qualifications", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationNo qualifications", "Std. Error"])
-Edu.no.logodds.lower
+
 Edu.no.logodds.upper <- (mod.factors.coef.logodds["EducationNo qualifications", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationNo qualifications", "Std. Error"])
-Edu.no.logodds.upper
 
 Edu.other.logodds.lower <- (mod.factors.coef.logodds["EducationOther school level", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationOther school level", "Std. Error"])
-Edu.other.logodds.lower
+
 Edu.other.logodds.upper <- (mod.factors.coef.logodds["EducationOther school level", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationOther school level", "Std. Error"])
-Edu.other.logodds.upper
+
 
 Edu.standard.logodds.lower <- (mod.factors.coef.logodds["EducationStandard grade or equiv", "Estimate"]- 1.96 * mod.factors.coef.logodds["EducationStandard grade or equiv", "Std. Error"])
-Edu.standard.logodds.lower
+
 Edu.standard.logodds.upper <- (mod.factors.coef.logodds["EducationStandard grade or equiv", "Estimate"] + 1.96 * mod.factors.coef.logodds["EducationStandard grade or equiv", "Std. Error"])
-Edu.standard.logodds.upper
+
 
 Veg.logodds.lower <- (mod.factors.coef.logodds["VegYes", "Estimate"]- 1.96 * mod.factors.coef.logodds["VegYes", "Std. Error"])
-Veg.logodds.lower
-Veg.logodds.upper <- (mod.factors.coef.logodds["VegYes", "Estimate"] + 1.96 * mod.factors.coef.logodds["VegYes", "Std. Error"])
-Veg.logodds.upper
 
+Veg.logodds.upper <- (mod.factors.coef.logodds["VegYes", "Estimate"] + 1.96 * mod.factors.coef.logodds["VegYes", "Std. Error"])
+
+
+
+# Store the results in a data frame
+log_odds_ci <- data.frame(
+  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetarian"),
+  ci_low = c(Age.logodds.lower,Edu.higher.logodds.lower,Edu.HNC.logodds.lower,Edu.no.logodds.lower,Edu.other.logodds.lower, Edu.standard.logodds.lower,Veg.logodds.lower),
+  ci_up = c(Age.logodds.upper, Edu.higher.logodds.upper, Edu.HNC.logodds.upper, Edu.no.logodds.upper,Edu.other.logodds.upper, Edu.standard.logodds.upper, Veg.logodds.upper)
+)
+
+kable(log_odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the log odds", format="pipe")
 ```
 
-Hence the point estimate for the log-odds are 0.01, 0.15,
-
-This can be displayed graphically @fig-log_odds
 
 ```{r}
 #| echo: false
@@ -363,16 +437,113 @@ This can be displayed graphically @fig-log_odds
 #| warning: false
 #| label: fig-log_odds
 #| fig-cap: Log odds of each parameter
-#| fig-width: 4
-#| fig-height: 3
 #| fig-align: center
-plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE)
+
+
+plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
+```
+
+
+```{r}
+#| echo: false
+#| label: tbl-the_odds
+#| tbl-cap: Confidence interval of the Odds 
+
+# Store the results in a data frame
+odds_ci <- data.frame(
+  groups = c( "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetarian"),
+  ci_low = c(exp(Age.logodds.lower),exp(Edu.higher.logodds.lower),exp(Edu.HNC.logodds.lower),exp(Edu.no.logodds.lower),exp(Edu.other.logodds.lower), exp(Edu.standard.logodds.lower),exp(Veg.logodds.lower)),
+  ci_up = c(exp(Age.logodds.upper), exp(Edu.higher.logodds.upper), exp(Edu.HNC.logodds.upper), exp(Edu.no.logodds.upper),exp(Edu.other.logodds.upper), exp(Edu.standard.logodds.upper), exp(Veg.logodds.upper))
+)
+
+kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the odds", format="pipe")
 ```
 
 
 
 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-odds
+#| fig-cap: odds of each parameter
+#| fig-align: center
+plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
+```
+
+@fig-odds shows odds of each values
+
+
+```{r}
+#| echo: false
+#| label: tbl-pred_age
+#| tbl-cap: Predicted probabilities of obesity by Age
+
+predict(model_factors, type= "response")
+```
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-pred_Age
+#| fig-cap: Predicted probabilities of obesity by Age 
+#| fig-align: center
+
+plot_model(model_factors, type = "pred", terms= "Age[all]")
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-pred_Edu
+#| fig-cap: Predicted probabilities of obesity by Education
+#| fig-align: center
+
+plot_model(model_factors, type = "pred", terms= "Education")
+```
+
+
+we dont consider sex or
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-pred_Sex
+#| fig-cap: Predicted probabilities of obesity by Sex
+#| fig-align: center
+
+plot_model(model_factors, type = "pred", terms = "Sex")
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-pred_Veg
+#| fig-cap: Predicted probabilities of obesity by Veg
+#| fig-align: center
+
+plot_model(model_factors, type = "pred", terms = "Veg")
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-pred_Fruit
+#| fig-cap: Predicted probabilities of obesity by Fruit
+#| fig-align: center
+
+
+plot_model(model_factors, type = "pred", terms = "Fruit")
+```
 
 # Conclusions {#sec-ccls}
 
-Accuracy and distance are negative related
+Findings of q1 and q2
+
+Future study
