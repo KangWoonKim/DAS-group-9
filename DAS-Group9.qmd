@@ -69,11 +69,6 @@ data$Fruit <- as.factor(data$Fruit)
 
 
 ```
-
-@tbl-obesity_by_factors indicates that
-
-The barplot @fig-bar displays the proportion of the Obesity prevalence over the factors, such as `Year`,`Age`, `Sex`,`Education`,`Veg` and `Fruit`.
-
 ```{r}
 #| warning: false
 #| message: false 
@@ -117,6 +112,66 @@ obesity_Fruit <- data %>%
             Obese_No = sum(Obese == "No") / n() * 100)
 obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
 ```
+```{r}
+#| echo: false
+#| fig-cap: Scotland's Obesity prevalence over the factors
+#| label: fig-bar
+#| fig-align: center
+#| message: false
+#| warning: false
+
+# Plot 
+
+
+# Plot
+p1<-ggplot(obesity_age_long, aes(x = Age, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Age",
+       x = "Age",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p2<-ggplot(obesity_Sex_long, aes(x = Sex, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Sex",
+       x = "Sex",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p3<- ggplot(obesity_Edu_long, aes(x = Education, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Education",
+       x = "Education",
+       y = "Percentage (%)",
+       fill = "Obesity Status")+
+  theme(axis.text.x = element_text(size = 2))
+
+# Plot 
+p4<-ggplot(obesity_Veg_long, aes(x = Veg, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Veg",
+       x = "Veg",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+# Plot 
+p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_minimal() +
+  labs(title = "Obesity prevalence in Scotland by Fruit",
+       x = "Fruit",
+       y = "Percentage (%)",
+       fill = "Obesity Status")
+
+
+```
+@tbl-obe_year indicates that the lowest value recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year. 
 
 ```{r}
 #| echo: false
@@ -127,6 +182,22 @@ obesity_by_year <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_year)
 ```
+This is also clear in @fig-line_year:
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| fig-cap: Percentage of obese people in Scotland by year
+#| label: fig-line_year
+ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
+ geom_line()+
+     labs(title = "Obesity prevalence in Scotland by Year",
+          x = "Year",
+          y = "Percentage of Obesity (%)",
+          )
+```
+In @tbl-obe_Age and @fig-bar_age, there seems to be a trend of increasing obesity percentage as age increases, peaking at the 60-70 range (at 35.9%) then falling down, with 90+ having the lowest percentage.
 
 ```{r}
 #| echo: false
@@ -138,7 +209,17 @@ obesity_by_age_group <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_age_group)
 ```
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by age group
+#| label: fig-bar_age
+#| fig-align: center
+#| message: false
+#| warning: false
 
+p1
+```
+It seems as though the female and male percentages are roughly the same, with the obesity percentage of females only just being higher than that of males by 0.4%, as shown in @tbl-obe_sex and @fig- bar_sex .
 ```{r}
 #| echo: false
 #| label: tbl-obe_sex
@@ -148,7 +229,17 @@ obesity_by_sex <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_sex)
 ```
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Gender
+#| label: fig-bar_sex
+#| fig-align: center
+#| message: false
+#| warning: false
 
+p2
+```
+We can see from @tbl-obe_edu that those with no qualification have the highest percentage of obesity (at 36.5%) and the lowest rate being those with a degree or higher (at 24.8%), this is supported in @fig-bar_edu. 
 ```{r}
 #| echo: false
 #| label: tbl-obe_edu
@@ -158,6 +249,17 @@ obesity_by_education <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_education)
 ```
+```{r}
+#| echo: false
+#| fig-cap: Percentage of obese people in Scotland by Education
+#| label: fig-bar_edu
+#| fig-align: center
+#| message: false
+#| warning: false
+
+p3
+```
+@tbl-ob_veg and @fig-bar_Veg show that those who did consume the recommended vegetable intake had a lower obesity percentage than those who didn't by 3.2%. 
 
 ```{r}
 #| echo: false
@@ -168,119 +270,6 @@ obesity_by_veg <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_veg)
 ```
-
-```{r}
-#| echo: false
-#| label: tbl-ob_fruit
-#| tbl-cap:  Obesity percentage table by fruit
-obesity_by_fruit <- data %>%
-  group_by(Fruit) %>%
-  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_fruit)
-```
-
-```{r}
-#| echo: false
-#| fig-cap: Scotland's Obesity prevalence over the factors
-#| label: fig-bar
-#| fig-align: center
-#| message: false
-#| warning: false
-
-# Plot 
-p1<- ggplot(obesity_prevalence_long, aes(x = Year, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Year",
-       x = "Year",
-       y = "Percentage (%)",
-       fill = "Obesity Status")
-
-# Plot
-p2<-ggplot(obesity_age_long, aes(x = Age, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Age",
-       x = "Age",
-       y = "Percentage (%)",
-       fill = "Obesity Status")
-
-# Plot 
-p3<-ggplot(obesity_Sex_long, aes(x = Sex, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Sex",
-       x = "Sex",
-       y = "Percentage (%)",
-       fill = "Obesity Status")
-
-# Plot 
-p4<- ggplot(obesity_Edu_long, aes(x = Education, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Education",
-       x = "Education",
-       y = "Percentage (%)",
-       fill = "Obesity Status")+
-  theme(axis.text.x = element_text(size = 2))
-
-# Plot 
-p5<-ggplot(obesity_Veg_long, aes(x = Veg, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Veg",
-       x = "Veg",
-       y = "Percentage (%)",
-       fill = "Obesity Status")
-
-# Plot 
-p6<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_minimal() +
-  labs(title = "Obesity prevalence in Scotland by Fruit",
-       x = "Fruit",
-       y = "Percentage (%)",
-       fill = "Obesity Status")
-
-#grid.arrange(p1,p2,p3,p4,p5,p6, ncol=2)
-p1
-
-
-```
-
-```{r}
-#| echo: false
-#| fig-cap: Percentage of obese people in Scotland by age group
-#| label: fig-bar_age
-#| fig-align: center
-#| message: false
-#| warning: false
-
-p2
-```
-
-```{r}
-#| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Gender
-#| label: fig-bar_sex
-#| fig-align: center
-#| message: false
-#| warning: false
-
-p3
-```
-
-```{r}
-#| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Education
-#| label: fig-bar_edu
-#| fig-align: center
-#| message: false
-#| warning: false
-
-p4
-```
-
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Vegetarian
@@ -290,10 +279,18 @@ p4
 #| warning: false
 
 
-p5
+p4
 ```
-
-
+There was not a big difference between those who consumed the recommended daily intake of fruit and those who did not, with those who did having a 0.3% higher obesity percentage, as shown in @tbl-ob_fruit and @fig-bar_Fruit.
+```{r}
+#| echo: false
+#| label: tbl-ob_fruit
+#| tbl-cap:  Obesity percentage table by fruit
+obesity_by_fruit <- data %>%
+  group_by(Fruit) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+kable(obesity_by_fruit)
+```
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Fruit
