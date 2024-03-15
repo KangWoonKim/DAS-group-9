@@ -1,0 +1,256 @@
+---
+title: "Data Anlaysis Group Project"
+author: "Group 9 (2718740, your student ID)"
+number-sections: true 
+format: 
+  html:
+    embed-resources: true
+    code-tools: true
+  pdf: default
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+library(ggplot2)
+library(dplyr)
+library(moderndive)
+library(skimr)
+library(kableExtra)
+library(gridExtra)
+library(gapminder)
+library(MASS)
+library(knitr)
+library(datasets)
+library(broom)
+library(infer)
+library(janitor)
+library(tidyr)
+library(ISLR)
+library(readr)
+library(stats)
+library(patchwork)
+library(tidymodels)
+library(tidyverse)
+library(gt)
+```
+
+# Exploratory data analysis {#sec-eda}
+
+
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+
+data <- read_csv("DAProject1.csv")
+data <- na.omit(data)
+
+data$Obese <- as.factor(data$Obese)
+data$Sex <- as.factor(data$Sex)
+data$Education <- as.factor(data$Education)
+data$Veg <- as.factor(data$Veg)
+data$Fruit <- as.factor(data$Fruit)
+
+
+```
+
+## Obesity by time
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-time
+#| fig-cap: Obesity by time graph
+
+obesity_by_time <- data |>
+  group_by(Year)|>
+  summarise(Obesity_Prevalence = mean(Obese=="Yes") *100 )
+
+ggplot(obesity_by_time, aes(x=Year, y=Obesity_Prevalence))+
+  geom_line()+
+  labs(title = "Prevalence of of obesity by year", x="Year", y="percentage of obesity")
+
+
+
+
+
+
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-time1
+#| fig-cap: Obesity by time table 
+
+obesity_by_time|>
+  gt()
+
+```
+
+@fig-time shows that prevalence of obesity has been varying between 2008 and 2012 with its data points in a table @fig-time1. We show this by fitting the percentage of people classed as obese in a given year and plot them on a graph as a time series to show a trend. From our graph we see that the lowest value was in 2009 with a value of 28.79% and the highest was 2010 with a value of 30.47. our graph shows that despite our clear pattern the graph only shows a maximum increase of 1.69%. This implies that year is not a significant factor in obesity as there isnt a very high range of values. However we will explore this in more detail in the Formal Analysis.
+
+## Obesity by sex
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-sex
+#| fig-cap: Obesity by sex graph
+
+obesity_by_sex <- data |>
+  group_by(Sex) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+ggplot(data = obesity_by_sex, aes(x = Sex, y = Obesity_Prevalence, fill = Sex)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Gender",
+       x = "Gender",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+
+
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-sex1
+#| fig-cap: Obesity by sex table
+
+obesity_by_sex|>
+  gt()
+
+```
+
+grouping our data together by sex we get the bar plot @fig-sex above with the corresponding data in the table @fig-sex1 . it shows that there isn't much difference in the prevalence of obesity between males and females as the data shows a prevalence of 29.36790 and 29.80659 respectively.
+
+## Obesity by education level
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false
+#| label: fig-edu 
+#| fig-cap: Obesity by education level graph
+
+obesity_by_education <- data |>
+  group_by(Education) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+ggplot(data = obesity_by_education, aes(x = Education, y = Obesity_Prevalence, fill = Education)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Education",
+       x = "Education",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+
+
+
+
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false
+#| label: fig-edu1
+#| fig-cap: Obesity by education level table
+
+obesity_by_education|>
+  gt()
+
+```
+
+@fig-edu and @fig-edu1 displays the obesity prevalence by level of education. Here we see that this is much more significant than the previous graphs as the graph displays that the group with no qualifications have a higher prevalence in obesity 
+
+## Obesity by vegetable consumption
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-veg
+#| fig-cap: Obesity by vegetable consumption graph
+
+obesity_by_veg <- data |>
+  group_by(Veg) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+ggplot(data = obesity_by_veg, aes(x = Veg, y = Obesity_Prevalence, fill = Veg)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Vegetable Consumption",
+       x = "Vegetable Consumption",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+
+
+
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| label: fig-veg1
+#| fig-cap: Obesity by vegetable consumption table
+
+obesity_by_veg|>
+  gt()
+
+```
+
+@fig-veg shows if a person consumes the recommended daily vegetable intake against the prevalence in obesity with the respective table @fig-veg1. This shows that a person who does not consume recommended veg intake is more likely to be obese in this data set. 
+
+## Obesity by fruit consumption
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false
+#| label: fig-fru
+#| fig-cap: Obesity by fruit consumption graph
+
+obesity_by_fruit <- data |>
+  group_by(Fruit) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+ggplot(data = obesity_by_veg, aes(x = Veg, y = Obesity_Prevalence, fill = Veg)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Vegetable Consumption",
+       x = "Vegetable Consumption",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+
+
+
+
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false
+#| label: fig-fru1
+#| fig-cap: Obesity by fruit consumption table 
+
+obesity_by_fruit|>
+  gt()
+
+
+```
+
+Similarly in @fig-fru and @fig-fru1 this we see the recommended daily fruit consumption against the prevalence in obesity of the respective group (Yes/No), again similarly to the table on veg consumption we see that the group who don't consume the recommended daily fruit intake are more likely to be obese thst those who do.

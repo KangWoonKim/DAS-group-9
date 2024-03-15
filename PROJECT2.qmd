@@ -1,0 +1,151 @@
+---
+title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys of 2008 and 2012"
+author: "Group 9"
+number-sections: true
+format: 
+  html:
+    embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+library(ggplot2)
+library(tidyverse)
+library(tidymodels)
+library(gt)
+library(MASS)
+library(patchwork)
+library(moderndive)
+library(dplyr)
+
+```
+
+# Introduction {#sec-intro}
+
+Obesity is a serious health concern to those it involves. Scotland has the highest obesity rate in the UK in addition to having one of the highest in the developed world which clearly emphasises the significance of the problem. In terms of the effects high obesity rates can have on Scotland, there are many including increased mortality rates, increased healthcare costs and less people in work which negatively impacts the economy. The Scottish health surveys from 2008 and 2012 collected data from individuals regarding their Age, Sex, Education, Body Mass Index (BMI) and whether they consumed the recommended daily fruit and vegetable intake. In this report, we will be investigating whether the prevalence of obesity in Scotland between 2008 and 2012 has changed. Additionally, whether the obesity status of individuals is effected differently in relation to their age, gender, socio-economic status or lifestyle factors.
+
+# Exploratory Analysis {#sec-EA}
+
+```{r}
+#| eval: true
+#| echo: false
+data <- read.csv("DAProject1.csv")
+
+obesity_by_sex <- data |>
+  group_by(Sex) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+obesity_by_education <- data |>
+  group_by(Education) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+obesity_by_veg <- data |>
+  group_by(Veg) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+obesity_by_fruit <- data |>
+  group_by(Fruit) |>
+  summarise(Obesity_Prevalence = mean(Obese == "Yes") * 100)
+
+```
+
+## Obesity by Year
+
+```{r}
+#| eval: true
+#| echo: false
+
+
+obesity_by_time <- data |>
+  group_by(Year)|>
+  summarise(Obesity_Prevalence = mean(Obese=="Yes") *100 )
+
+ggplot(obesity_by_time, aes(x=Year, y=Obesity_Prevalence))+
+  geom_line()+
+  labs(title = "Prevalence of of obisity by year", x="Year", y="percentage of obesity")
+
+
+
+obesity_by_time|>
+  gt()
+
+
+
+```
+
+## Obesity by Sex 
+
+```{r}
+#| eval: true
+#| echo: false
+
+
+ggplot(data = obesity_by_sex, aes(x = Sex, y = Obesity_Prevalence, fill = Sex)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Gender",
+       x = "Gender",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+obesity_by_sex|>
+  gt()
+```
+
+## Obesity by Education 
+
+```{r}
+#| eval: true
+#| echo: false
+
+ggplot(data = obesity_by_education, aes(x = Education, y = Obesity_Prevalence, fill = Education)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Education",
+       x = "Education",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+obesity_by_education|>
+  gt()
+```
+
+## Obesity by vegetable consumption
+
+```{r}
+#| eval: true
+#| echo: false
+
+ggplot(data = obesity_by_veg, aes(x = Veg, y = Obesity_Prevalence, fill = Veg)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Vegetable Consumption",
+       x = "Vegetable Consumption",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+obesity_by_veg|>
+  gt()
+```
+
+## Obesity by fruit
+
+```{r}
+#| eval: true
+#| echo: false
+
+ggplot(data = obesity_by_fruit, aes(x = Fruit, y = Obesity_Prevalence, fill = Fruit)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Obesity Prevalence by Fruit Consumption",
+       x = "Fruit Consumption",
+       y = "Obesity Prevalence (%)") +
+  theme_minimal()
+
+obesity_by_fruit|>
+  gt()
+```
+
+# Formal Analysis {#sec-FA}
+
+# Conclusions {#sec-con}
