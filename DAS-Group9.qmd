@@ -69,6 +69,7 @@ data$Fruit <- as.factor(data$Fruit)
 
 
 ```
+
 ```{r}
 #| warning: false
 #| message: false 
@@ -112,6 +113,7 @@ obesity_Fruit <- data %>%
             Obese_No = sum(Obese == "No") / n() * 100)
 obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Scotland's Obesity prevalence over the factors
@@ -171,7 +173,8 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
 
 
 ```
-@tbl-obe_year indicates that the lowest percentage of subjects with obesity recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year. 
+
+@tbl-obe_year indicates that the lowest percentage of subjects with obesity recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year.
 
 ```{r}
 #| echo: false
@@ -182,6 +185,7 @@ obesity_by_year <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_year)
 ```
+
 This is also clear in @fig-line_year:
 
 ```{r}
@@ -197,6 +201,7 @@ ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
           y = "Percentage of Obesity (%)",
           )
 ```
+
 In @tbl-obe_Age and @fig-bar_age, there seems to be a trend of increasing obesity percentage as age increases, peaking at the 60-70 range (at 35.9%) then falling down, with 90+ having the lowest percentage.
 
 ```{r}
@@ -209,6 +214,7 @@ obesity_by_age_group <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_age_group)
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by age group
@@ -219,7 +225,9 @@ kable(obesity_by_age_group)
 
 p1
 ```
+
 It seems as though the female and male percentages are roughly the same, with the obesity percentage of females only just being higher than that of males by 0.4%, as shown in @tbl-obe_sex and @fig- bar_sex .
+
 ```{r}
 #| echo: false
 #| label: tbl-obe_sex
@@ -229,6 +237,7 @@ obesity_by_sex <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_sex)
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Gender
@@ -239,7 +248,9 @@ kable(obesity_by_sex)
 
 p2
 ```
-We can see from @tbl-obe_edu that those with no qualification have the highest percentage of obesity (at 36.5%) and the lowest rate being those with a degree or higher (at 24.8%), this is supported in @fig-bar_edu. 
+
+We can see from @tbl-obe_edu that those with no qualification have the highest percentage of obesity (at 36.5%) and the lowest rate being those with a degree or higher (at 24.8%), this is supported in @fig-bar_edu.
+
 ```{r}
 #| echo: false
 #| label: tbl-obe_edu
@@ -249,6 +260,7 @@ obesity_by_education <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_education)
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Education
@@ -259,7 +271,8 @@ kable(obesity_by_education)
 
 p3
 ```
-@tbl-ob_veg and @fig-bar_Veg show that those who did consume the recommended vegetable intake had a lower obesity percentage than those who didn't by 3.2%. 
+
+@tbl-ob_veg and @fig-bar_Veg show that those who did consume the recommended vegetable intake had a lower obesity percentage than those who didn't by 3.2%.
 
 ```{r}
 #| echo: false
@@ -270,6 +283,7 @@ obesity_by_veg <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_veg)
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Vegetarian
@@ -281,7 +295,9 @@ kable(obesity_by_veg)
 
 p4
 ```
+
 There was not a big difference between those who consumed the recommended daily intake of fruit and those who did not, with those who did having a 0.3% higher obesity percentage, as shown in @tbl-ob_fruit and @fig-bar_Fruit.
+
 ```{r}
 #| echo: false
 #| label: tbl-ob_fruit
@@ -291,6 +307,7 @@ obesity_by_fruit <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_fruit)
 ```
+
 ```{r}
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Fruit
@@ -301,7 +318,6 @@ kable(obesity_by_fruit)
 
 p5
 ```
-
 
 # Formal data analysis {#sec-fda}
 
@@ -348,8 +364,7 @@ kable(dataframeone, row.names = FALSE)
 
 ```
 
-from the `model_factors` we observe that `Sex (Male)` and `Fruit intake` are not significant parameters since the p-values are greater than 0.05 . 
-So, we use stepAIC function to find a better model.
+from the `model_factors` we observe that `Sex (Male)` and `Fruit intake` are not significant parameters since the p-values are greater than 0.05 . So, we use stepAIC function to find a better model.
 
 Thus, we can make new regression model without those two factors.
 
@@ -361,6 +376,7 @@ Thus, we can make new regression model without those two factors.
 AIC <- stepAIC(model_factors)
 
 ```
+
 ```{r}
 #| echo: false
 #| label: tbl-regmodel2
@@ -373,6 +389,7 @@ dataframe <- data.frame(
 
 kable(dataframe, row.names = FALSE)
 ```
+
 Hence, the regression line is given by :
 
 $$
@@ -437,7 +454,9 @@ log_odds_ci <- data.frame(
 
 kable(log_odds_ci, col.names = c("Groups", "Log-odds", "confidence interval low boundary", "confidence interval upper boundary"), caption = "Confidence interval of the log odds", format="pipe", row.names = FALSE)
 ```
+
 We can see these log-odds intervals visually in @fig-log_odds:
+
 ```{r}
 #| echo: false
 #| message: false
@@ -450,6 +469,7 @@ We can see these log-odds intervals visually in @fig-log_odds:
 #plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
 plot_model(AIC, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
 ```
+
 From this output and figure we can see that `Age` and all `Education` variables have greater odds of association with the obesity response variable, however whether the person consumes the recommended amount of vegetables has lower odds of association with obesity rates.
 
 ```{r}
@@ -467,9 +487,6 @@ odds_ci <- data.frame(
 kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the odds", format="pipe")
 ```
 
-
-
-
 ```{r}
 #| echo: false
 #| message: false
@@ -483,7 +500,6 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 
 @fig-odds shows odds of each values
 
-
 ```{r}
 #| echo: false
 #| label: tbl-pred_age
@@ -491,7 +507,6 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 
 pred <- predict(model_factors, type= "response")
 ```
-
 
 ```{r}
 #| echo: false
@@ -515,8 +530,8 @@ plot_model(model_factors, type = "pred", terms= "Age[all]")
 plot_model(model_factors, type = "pred", terms= "Education")
 ```
 
-
 we dont consider sex or
+
 ```{r}
 #| echo: false
 #| message: false
