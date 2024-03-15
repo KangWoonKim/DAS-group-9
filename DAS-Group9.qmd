@@ -543,11 +543,18 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 
 For the results, the model aimed to predict probabilities of obesity was developed considering various factors, including 'Sex' and 'Fruit' consumption. However, upon evaluation, both 'Sex' and 'Fruit' were identified as statistically insignificant predictors within the model. This inclusion of insignificant factors could potentially lead to inaccuracies in the predicted probabilities of obesity. Therefore, we have omitted these variables, to enhance the accuracy and reliability of the obesity probability predictions.
 
+@tbl-prob shows the predicted probabilities of each factor, with each value indicating how the probability of obesity changes when either the variable increases one unit (for continuous variables) or the variable changes from 0 to 1 (i.e. yes to no) (for categorical variables). From this, we can see that for each one year increase to the `Age` variable, the probability of obesity being present increases to 0.5029 (provided all other variables remain the same), this is close to 0.5 so `Age` does not seem to be too important in predicting whether obesity is present or not. Each of the `Education` variables are above 0.5, implying when any one of these is "true", the probability that someone has obesity increases, with no education being the strongest indicator of obesity overall. The `VegYes` variable has probability 0.4652 which implies that when a person consumes the recommended daily intake of vegetables, the probability of them having obesity becomes 0.4652, so they are more likely to not have obesity.
+
 ```{r}
 #| echo: false
-#| label: tbl-pred_age
-#| tbl-cap: Predicted probabilities of obesity by Age
-
+#| label: tbl-prob
+#| tbl-cap: Predicted probabilities of obesity by factors
+plog <- plogis(AIC$coefficients)
+dframe <- data.frame(
+     Groups = c( "Intercept", "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
+     Probability = plog
+ )
+ kable(dframe, row.names = FALSE)
 ```
 
 @fig-pred_Age presents the predicted probabilities of obesity across different ages, indicating a nearly linear relationship. The graph shows a consistent increase in the probability of obesity as age advances, starting from around 20% in the youngest age group and ascending to close to 45% in the oldest age group represented. The trend line is almost straight, suggesting a steady rate of increase in the likelihood of obesity with age.
