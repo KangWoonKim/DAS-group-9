@@ -226,7 +226,7 @@ kable(obesity_by_age_group)
 p1
 ```
 
-It seems as though the female and male percentages are roughly the same, with the obesity percentage of females only just being higher than that of males by 0.4%, as shown in @tbl-obe_sex and @fig- bar_sex .
+It seems as though the female and male percentages are roughly the same, with the obesity percentage of females only just being higher than that of males by 0.4%, as shown in @tbl-obe_sex and @fig-bar_sex .
 
 ```{r}
 #| echo: false
@@ -364,7 +364,7 @@ kable(dataframeone, row.names = FALSE)
 
 ```
 
-from the `model_factors` we observe that `Sex (Male)` and `Fruit intake` are not significant parameters since the p-values are greater than 0.05 . So, we use stepAIC function to find a better model.
+from the `model_factors` we observe that `Sex (Male)` and `Fruit` intake are not significant parameters since the p-values are greater than 0.05 . So, we use stepAIC function to find a better model.
 
 Thus, we can make new regression model without those two factors.
 
@@ -505,8 +505,10 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 #| label: tbl-pred_age
 #| tbl-cap: Predicted probabilities of obesity by Age
 
-pred <- predict(model_factors, type= "response")
 ```
+
+
+
 
 ```{r}
 #| echo: false
@@ -516,7 +518,7 @@ pred <- predict(model_factors, type= "response")
 #| fig-cap: Predicted probabilities of obesity by Age 
 #| fig-align: center
 
-plot_model(model_factors, type = "pred", terms= "Age[all]")
+plot_model(AIC, type = "pred", terms= "Age[all]")
 ```
 
 ```{r}
@@ -527,7 +529,7 @@ plot_model(model_factors, type = "pred", terms= "Age[all]")
 #| fig-cap: Predicted probabilities of obesity by Education
 #| fig-align: center
 
-plot_model(model_factors, type = "pred", terms= "Education")
+plot_model(AIC, type = "pred", terms= "Education")
 ```
 
 we dont consider sex or
@@ -551,7 +553,7 @@ plot_model(model_factors, type = "pred", terms = "Sex")
 #| fig-cap: Predicted probabilities of obesity by Veg
 #| fig-align: center
 
-plot_model(model_factors, type = "pred", terms = "Veg")
+plot_model(AIC, type = "pred", terms = "Veg")
 ```
 
 ```{r}
