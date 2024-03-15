@@ -12,18 +12,13 @@ editor_options:
 ---
 
 # Introduction {#sec-intro}
+Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. Scotland has the highest obesity rate in the UK in addition to having one of the highest in the developed world which clearly emphasises the significance of the problem. The Scottish health surveys from 2008 and 2012 collected data from individuals regarding their Age, Sex, Education, Body Mass Index (BMI) and whether they consumed the recommended daily fruit and vegetable intake in order to examine the prevalence and determinants of obesity in Scotland. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis we will be investigating whether the prevalence of obesity in Scotland changed over the given years (2008 to 2012). Additionally, whether the obesity status of individuals is effected differently in relation to their age, gender, socio-economic status or lifestyle factors. From this, we can offer evidence-based recommendations for public health strategies to mitigate this growing health concern. 
 
-Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. This project examines the prevalence and determinants of obesity in Scotland, using data from the Scottish Health Surveys between 2008 and 2012. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis, the study seeks to provide insights into the patterns of obesity across different population segments, offering evidence-based recommendations for public health strategies to mitigate this growing health concern.
+In @sec-eda, we will study the relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits in order to uncover preliminary insights and trends within the data through exploratory data analysis techniques. This is done using a variety of plots and tables that emphasise the relationship between the prevalence of obesity in Scotland and the various influencing factors.
 
-Obesity is a serious health concern to those it involves. Scotland has the highest obesity rate in the UK in addition to having one of the highest in the developed world which clearly emphasises the significance of the problem. In terms of the effects high obesity rates can have on Scotland, there are many including increased mortality rates, increased healthcare costs and less people in work which negatively impacts the economy. The Scottish health surveys from 2008 and 2012 collected data from individuals regarding their Age, Sex, Education, Body Mass Index (BMI) and whether they consumed the recommended daily fruit and vegetable intake. In this report, we will be investigating whether the prevalence of obesity in Scotland between 2008 and 2012 has changed. Additionally, whether the obesity status of individuals is effected differently in relation to their age, gender, socio-economic status or lifestyle factors.
+Moreover,  @sec-fda consists of the results from fitting the regression model to the data and evaluating the assumptions of the model. This segment will delve into logistic regression analyses to quantify the impact of different predictors on obesity, providing a more nuanced understanding of its determinants and giving us an idea of which of the stated influencing factors are significant and the way in which they impact the increase in the prevalence of Obesity in Scotland. 
 
-Background, How the data are collected The aim of this project
-
-In @sec-eda, we will study the relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits. This section aims to uncover preliminary insights and trends within the data through exploratory data analysis techniques.
-
-Moreover, @sec-fda consists of the results from fitting the regression model to the data and evaluating the assumptions of the model. This segment will delve into logistic regression analyses to quantify the impact of different predictors on obesity, providing a more nuanced understanding of its determinants.
-
-The conclusion will be given in @sec-ccls, where we synthesize our findings, discuss the implications for public health policy and practice, and suggest directions for future research. This final section aims to encapsulate the key insights derived from the analysis and underscore their relevance to tackling obesity in Scotland.
+The conclusion will be given in @sec-ccls, where we gather our findings, discuss the implications for public health policy and practice, and suggest directions for future research. This final section aims to encapsulate the key insights derived from the analysis and underscore their relevance to tackling the problem of obesity in Scotland.
 
 ```{r}
 #| warning: false
@@ -174,7 +169,7 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
 
 ```
 
-@tbl-obe_year indicates that the lowest percentage of subjects with obesity recorded was in 2009, with the peak being in 2010 (at 30.5%) and the rate decreasing after this year.
+@tbl-obe_year presents the obesity percentage in Scotland from 2008 to 2012, indicating a slight fluctuation over the years with a notable peak in 2010 at 30.47%. The corresponding @fig-line_year illustrates these changes with a line graph that sharply rises in 2010 and then declines, making it visually apparent that while there is an overall stability in obesity rates, there was a significant but brief increase in 2010.
 
 ```{r}
 #| echo: false
@@ -185,8 +180,6 @@ obesity_by_year <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 kable(obesity_by_year)
 ```
-
-This is also clear in @fig-line_year:
 
 ```{r}
 #| warning: false
@@ -202,7 +195,8 @@ ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
           )
 ```
 
-In @tbl-obe_Age and @fig-bar_age, there seems to be a trend of increasing obesity percentage as age increases, peaking at the 60-70 range (at 35.9%) then falling down, with 90+ having the lowest percentage.
+@tbl-obe_Age and @fig-bar_age suggest a pattern in the prevalence of obesity among different age groups in Scotland. The percentage of obesity appears to rise with increasing age, peaking in the age group of 60-70 years, where it reaches 35.9%. This suggests that individuals in this age range have the highest proportion of obesity compared to other age groups. Following this peak, there is a noticeable decline in the percentage of obesity as age continues to increase, with the group aged 90 and above having the lowest obesity percentage at 9.52%.
+
 
 ```{r}
 #| echo: false
@@ -226,8 +220,7 @@ kable(obesity_by_age_group)
 p1
 ```
 
-It seems as though the female and male percentages are roughly the same, with the obesity percentage of females only just being higher than that of males by 0.4%, as shown in @tbl-obe_sex and @fig-bar_sex .
-
+@tbl-obe_sex presents a comparison of obesity prevalence between females and males in Scotland, revealing a marginal difference between the sexes. The obesity rate for females stands at 29.80659%, which is just 0.4% higher than the rate for males, which is 29.36790%. This is visually represented in @fig-bar_Sex, where the bar corresponding to females is slightly taller than that for males, indicating this small but noticeable difference. The graph demonstrates that obesity is a significant health issue for both females and males in Scotland, with both experiencing high prevalence rates.
 ```{r}
 #| echo: false
 #| label: tbl-obe_sex
@@ -249,7 +242,7 @@ kable(obesity_by_sex)
 p2
 ```
 
-We can see from @tbl-obe_edu that those with no qualification have the highest percentage of obesity (at 36.5%) and the lowest rate being those with a degree or higher (at 24.8%), this is supported in @fig-bar_edu.
+@tbl-obe_edu and @fig-bar_edu illustrate the relationship between educational attainment and obesity prevalence in Scotland. The data indicates a trend where obesity prevalence decreases with higher levels of education. Individuals with no qualifications have the highest obesity rate at 36.46659%, while those with a degree or higher have the lowest at 24.77144%. This pattern suggests that educational level may be inversely related to the likelihood of being obese.
 
 ```{r}
 #| echo: false
@@ -272,7 +265,7 @@ kable(obesity_by_education)
 p3
 ```
 
-@tbl-ob_veg and @fig-bar_Veg show that those who did consume the recommended vegetable intake had a lower obesity percentage than those who didn't by 3.2%.
+@tbl-ob_veg and @fig-bar_Veg explore the obesity prevalence in Scotland with respect to vegetarianism. From the information provided, individuals who do not follow a vegetarian diet have a higher obesity percentage, recorded at 32.06191%. In contrast, those who identify as vegetarian have a lower obesity percentage, at 28.93873%. This is visually represented in @fig-bar_Veg, where the bar corresponding to non-vegetarians is notably higher than that for vegetarians.
 
 ```{r}
 #| echo: false
@@ -296,7 +289,7 @@ kable(obesity_by_veg)
 p4
 ```
 
-There was not a big difference between those who consumed the recommended daily intake of fruit and those who did not, with those who did having a 0.3% higher obesity percentage, as shown in @tbl-ob_fruit and @fig-bar_Fruit.
+@tbl-ob_fruit and @fig-bar_Fruit, which address fruit consumption, present a more nuanced picture. The obesity percentage for individuals who do not consume fruit is at 29.36099%, while the percentage for those who eat fruit is at 29.72168%. This difference is minor and, unlike the vegetarianism comparison, does not suggest a clear trend; the bars in the graph are almost equal in height. This lack of significant disparity could imply that fruit consumption, in isolation, does not have a strong correlation with obesity prevalence, or it could reflect that the amount and type of fruit consumed, as well as other dietary and lifestyle factors, play a role in the complex relationship with obesity.
 
 ```{r}
 #| echo: false
@@ -321,7 +314,8 @@ p5
 
 # Formal data analysis {#sec-fda}
 
-Next, we formally analyse the data by considering objective in turn. Firstly, we fitting the logistic regression model since we get binary outcome of obese_yes or obese_no. Equation containing the explanatory variable and response variable as follows:
+Next, we formally analyse the data by considering objective in turn. 
+The initial model was established by including an array of independent variables such as age, sex, various educational levels, and dietary habits encompassing vegetable and fruit intake. This logistic regression model was selected due to the binary nature of the dependent variable—obesity, categorized as 'obese_yes' or 'obese_no'. The model sought to express the log-odds of the probability of being obese as a linear combination of the predictors, as illustrated by the logistic function:
 
 $$
 \ \log\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 Age(x_1) + \beta_2 Sex(x_2) + \beta_3 Education(x_3)+\beta_4Veg(x_4) + \beta_5 Fruit(x_5) + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
@@ -364,9 +358,8 @@ kable(dataframeone, row.names = FALSE)
 
 ```
 
-from the `model_factors` we observe that `Sex (Male)` and `Fruit` intake are not significant parameters since the p-values are greater than 0.05 . So, we use stepAIC function to find a better model.
 
-Thus, we can make new regression model without those two factors.
+Upon evaluation of the  `model_factors`, `Sex (Male)` and `Fruit` consumption were found to have p-values exceeding the threshold of 0.05, indicating that they do not significantly contribute to the prediction of obesity. Consequently, these variables were removed to refine the model. The refined model coefficients were obtained and are presented in @tbl-regmodel2, which excludes the aforementioned insignificant factors.
 
 ```{r}
 #| echo: false
@@ -376,6 +369,10 @@ Thus, we can make new regression model without those two factors.
 AIC <- stepAIC(model_factors)
 
 ```
+
+To evaluate the goodness of fit for the logistic regression model, the stepwise selection procedure known as stepAIC was employed. This methodological approach applies both forward selection and backward elimination techniques to optimize the model based on the Akaike Information Criterion (AIC). The stepAIC process iteratively adds and removes variables, assessing the impact of each variable on the AIC value. A lower AIC value generally indicates a better-fitting model, provided that it maintains a balance between goodness of fit and model simplicity.
+
+The application of stepAIC to the logistic regression model resulted in the exclusion of variables 'Sex' and 'Fruit' intake, as their presence did not contribute to a reduction in the AIC score, suggesting that their inclusion did not improve the model's predictive ability significantly. The final model, which excludes these variables, is considered to be more parsimonious and theoretically sound for predicting the probability of obesity in the studied population.
 
 ```{r}
 #| echo: false
@@ -390,15 +387,23 @@ dataframe <- data.frame(
 kable(dataframe, row.names = FALSE)
 ```
 
-Hence, the regression line is given by :
-
+The logistic regression equation derived from the model refinement using the stepAIC process, each independent variable's coefficient is integral to the calculation of the log-odds of the probability,
+p, of an individual being obese. The logistic function is represented as follows::
 $$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
 
-where p is probability of being obese and 1-p is probability of being not obese. Hence the log-odds of the being Obese increase by 0.012 for every unit increase in `age`. This provides us with a point estimate of how the log-odds changes with age.
+where p is probability of being obese and 1-p is probability of being not obese.
+The model delineates that, there is a 1.2% escalation in the log-odds of obesity, affirming age as a significant factor, with other variables held constant.
 
-However, we are also interested in producing a 95% confidence interval for these log-odds. These intervals are shown in @tbl-the_log_odds:
+The educational background introduces a discernible stratification in obesity prediction. Individuals with higher education levels exhibit a 14.8% increase in the log-odds of obesity, whereas those with an HNC/D level present a 24% rise. The absence of education correlates with a pronounced 38.6% surge in the log-odds, whereas other unspecified educational backgrounds are associated with a 21.9% increase. Similarly, possessing standard grade education corresponds to a 30.5% increase in the log-odds of obesity.
+
+Interestingly, the negative coefficient for vegetable intake, indicates that consuming vegetables is associated with a decrease in the log-odds of being obese by 14%. This suggests that a diet including vegetables is inversely related to the likelihood of being obese.
+
+Further analysis and interpretation of this model should take into account the log-odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. (see @tbl-the_log_odds)
+ 
+The confidence intervals give a range of plausible values for the log-odds and odds ratios, with a 95% level of confidence. Narrow confidence intervals, as seen with age and vegetable intake, suggest a more precise estimate, while wider intervals suggest greater uncertainty. In our data, all intervals do not cross 0 for log-odds ratios, which indicates that all predictors are statistically significant at the 95% confidence level.
+We can see these log-odds intervals visually in @fig-log_odds:
 
 ```{r}
 #| echo: false
@@ -455,7 +460,6 @@ log_odds_ci <- data.frame(
 kable(log_odds_ci, col.names = c("Groups", "Log-odds", "confidence interval low boundary", "confidence interval upper boundary"), caption = "Confidence interval of the log odds", format="pipe", row.names = FALSE)
 ```
 
-We can see these log-odds intervals visually in @fig-log_odds:
 
 ```{r}
 #| echo: false
@@ -470,7 +474,8 @@ We can see these log-odds intervals visually in @fig-log_odds:
 plot_model(AIC, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
 ```
 
-From this output and figure we can see that `Age` and all `Education` variables have greater odds of association with the obesity response variable, however whether the person consumes the recommended amount of vegetables has lower odds of association with obesity rates.
+Then, the odds ratios and their corresponding 95% confidence intervals provide valuable insights into the factors associated with obesity. The confidence intervals for the odds ratios of all predictors do not encompass the value of 1 (see @tbl-the_odds and @fig-odds). This observation is critical as it implies that the odds of obesity are significantly different from the null hypothesis value (odds ratio = 1) for each predictor. 
+Therefore, we can conclude with 95% certainty that age, various levels of education, and vegetable intake are statistically significant factors in the prediction of obesity within our model. Specifically, age and lower educational attainment are associated with increased odds of obesity, whereas vegetable intake is associated with decreased odds, underscoring the importance of these factors in public health interventions aimed at reducing obesity prevalence.
 
 ```{r}
 #| echo: false
@@ -498,7 +503,8 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 #plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
 ```
 
-@fig-odds shows odds of each values
+
+For the results, the model aimed to predict probabilities of obesity was developed considering various factors, including 'Sex' and 'Fruit' consumption. However, upon evaluation, both 'Sex' and 'Fruit' were identified as statistically insignificant predictors within the model. This inclusion of insignificant factors could potentially lead to inaccuracies in the predicted probabilities of obesity. Therefore, we have omitted these variables, to enhance the accuracy and reliability of the obesity probability predictions.
 
 ```{r}
 #| echo: false
@@ -507,8 +513,9 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 
 ```
 
+@fig-pred_Age presents the predicted probabilities of obesity across different ages, indicating a nearly linear relationship. The graph shows a consistent increase in the probability of obesity as age advances, starting from around 20% in the youngest age group and ascending to close to 45% in the oldest age group represented. The trend line is almost straight, suggesting a steady rate of increase in the likelihood of obesity with age.
 
-
+The shaded region around the trend line represents the confidence interval, which exhibits a slight increase in width as age progresses. This suggests a small increase in uncertainty of the predictions for the older age groups. Nonetheless, the relatively uniform width of the confidence interval across the age spectrum implies that the variance in the predicted probabilities of obesity does not drastically change with age.
 
 ```{r}
 #| echo: false
@@ -521,6 +528,10 @@ plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0
 plot_model(AIC, type = "pred", terms= "Age[all]")
 ```
 
+@fig-pred_Edu presents a statistical analysis on the correlation between educational levels and the projected likelihood of obesity. The data suggests a distinct inverse relationship between educational attainment and the propensity for obesity. Specifically, the graph indicates that the segment of the population without any educational qualifications registers the highest mean predicted probability for obesity. In stark contrast, individuals who have obtained a degree or higher education are attributed with the lowest mean predicted probability of being classified as obese.
+
+Additionally, an examination of the variance in the predicted probabilities reveals significant heterogeneity within the 'Other school level' category, which surpasses the uniformity observed in both the 'No qualifications' and 'Degree or higher' categories. This variability may suggest a complex interplay between education and other socio-economic factors that influence obesity rates. These findings highlight the importance of educational attainment in public health strategies aimed at combating obesity.
+
 ```{r}
 #| echo: false
 #| message: false
@@ -532,18 +543,11 @@ plot_model(AIC, type = "pred", terms= "Age[all]")
 plot_model(AIC, type = "pred", terms= "Education")
 ```
 
-we dont consider sex or
+@fig-pred_Veg illustrates the predicted probabilities of obesity with respect to vegetable consumption, as indicated by the binary categories 'Yes' and 'No'. The graph suggests that individuals who do not consume vegetables have a higher predicted probability of obesity, marked by a probability just over 28%. In contrast, the predicted probability for obesity among those who do consume vegetables is significantly lower, indicated by a probability just under 25%.
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-pred_Sex
-#| fig-cap: Predicted probabilities of obesity by Sex
-#| fig-align: center
+The error bars, which represent the confidence intervals, are notably longer for the 'No' category, implying greater uncertainty in the prediction for individuals who do not consume vegetables. The shorter error bars for the 'Yes' category suggest more confidence in the prediction for individuals who do consume vegetables.
 
-plot_model(model_factors, type = "pred", terms = "Sex")
-```
+This visual data suggests a potential inverse relationship between vegetable consumption and the likelihood of obesity, indicating that vegetable intake may be associated with a lower probability of being obese. 
 
 ```{r}
 #| echo: false
@@ -556,20 +560,10 @@ plot_model(model_factors, type = "pred", terms = "Sex")
 plot_model(AIC, type = "pred", terms = "Veg")
 ```
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-pred_Fruit
-#| fig-cap: Predicted probabilities of obesity by Fruit
-#| fig-align: center
 
-
-plot_model(model_factors, type = "pred", terms = "Fruit")
-```
 
 # Conclusions {#sec-ccls}
 
-Findings of q1 and q2
+
 
 Future study
