@@ -6,7 +6,8 @@ format:
   html:
     embed-resources: true
     code-tools: true
-  pdf: default
+  pdf: 
+    fontsize: 11pt
 editor_options: 
   chunk_output_type: console
 ---
@@ -15,12 +16,7 @@ editor_options:
 
 Obesity represents a significant public health issue globally, linked to numerous chronic diseases and a major cause of premature morbidity and mortality. Scotland has the highest obesity rate in the UK in addition to having one of the highest in the developed world which clearly emphasises the significance of the problem. The Scottish health surveys from 2008 and 2012 collected data from individuals regarding their Age, Sex, Education, Body Mass Index (BMI) and whether they consumed the recommended daily fruit and vegetable intake in order to examine the prevalence and determinants of obesity in Scotland. It aims to identify trends in obesity rates over the years and explore how demographic factors, socio-economic status, and lifestyle choices such as diet impact obesity levels. Through descriptive statistics and logistic regression analysis we will be investigating whether the prevalence of obesity in Scotland changed over the given years (2008 to 2012). Additionally, whether the obesity status of individuals is effected differently in relation to their age, gender, socio-economic status or lifestyle factors. From this, we can offer evidence-based recommendations for public health strategies to mitigate this growing health concern.
 
-In @sec-eda, we will go through an exploratory analysis of obesity trend over 2008 to 2012 and relationship between obesity and various influencing factors, including age, gender, education level, and daily consumption of vegetables and fruits in order to uncover preliminary insights and trends. This is done using a variety of plots and tables that emphasise the relationship between the prevalence of obesity in Scotland and the various influencing factors.
-
-Moreover, @sec-fda consists of the results from fitting the regression model to the data and evaluating the assumptions of the model. This segment will delve into logistic regression analyses to quantify the impact of different predictors on obesity, providing a more nuanced understanding of its determinants and giving us an idea of which of the stated influencing factors are significant and the way in which they impact the increase in the prevalence of Obesity in Scotland.
-
-The conclusion will be given in @sec-ccls, where we gather our findings, discuss the implications for public health policy and practice, and suggest directions for future research. This final section aims to encapsulate the key insights derived from the analysis and underscore their relevance to tackling the problem of obesity in Scotland.
-
+@sec-eda consists of an exploratory analysis of the Scottish health survey data and explores the stated questions of interest. @sec-fda contains the results from fitting a multiple regression model to the data, as well as the assessment of the model assumptions. Concluding remarks are given in @sec-ccls.
 ```{r}
 #| warning: false
 #| message: false 
@@ -170,16 +166,16 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
 
 ```
 
-@tbl-obe_year presents the obesity percentage in Scotland from 2008 to 2012, indicating a slight fluctuation over the years with a notable peak in 2010 at 30.47%. The corresponding @fig-line_year illustrates these changes with a line graph that sharply rises in 2010 and then declines, making it visually apparent that while there is an overall stability in obesity rates, there was a significant but brief increase in 2010.
+The @fig-line_year data indicates minor fluctuations in Scotland's obesity rates from 2008 to 2012, with a notable peak at 30.47% in 2010. The @fig-line_year graph underscores this trend, showcasing the temporary surge in 2010 against a backdrop of overall stability.
 
 ```{r}
 #| echo: false
-#| label: tbl-obe_year
-#| tbl-cap: prevalence of obesity over the year 2008 - 2012
+##| label: tbl-obe_year
+##| tbl-cap: prevalence of obesity over the year 2008 - 2012
 obesity_by_year <- data %>%
   group_by(Year) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_year)
+#kable(obesity_by_year)
 ```
 
 ```{r}
@@ -196,17 +192,16 @@ ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
           )
 ```
 
-@tbl-obe_Age and @fig-bar_age suggest a pattern in the prevalence of obesity among different age groups in Scotland. The percentage of obesity appears to rise with increasing age, peaking in the age group of 60-70 years, where it reaches 35.9%. This suggests that individuals in this age range have the highest proportion of obesity compared to other age groups. Following this peak, there is a noticeable decline in the percentage of obesity as age continues to increase, with the group aged 90 and above having the lowest obesity percentage at 9.52%.
-
+The @fig-bar_age indicate a correlation between age and obesity prevalence in Scotland, showing an increase in obesity rates with age, peaking at 35.9% among those aged 60-70. This pattern highlights this age group as having the highest obesity proportion. Beyond this peak, obesity percentages decline with further age increase, with individuals aged 90 and above exhibiting the lowest rate at 9.52%.
 ```{r}
 #| echo: false
-#| label: tbl-obe_Age
-#| tbl-cap: Obesity percentage table by age group
+##| label: tbl-obe_Age
+##| tbl-cap: Obesity percentage table by age group
 data$Age_Group <- cut(data$Age, breaks=c(0, 18, 30, 40, 50, 60, 70,80,90,Inf), labels=c("0-18", "19-30", "31-40", "41-50", "51-60", "60-70","70-80","80-90","90+"))
 obesity_by_age_group <- data %>%
   group_by(Age_Group) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_age_group)
+#kable(obesity_by_age_group)
 ```
 
 ```{r}
@@ -222,16 +217,16 @@ kable(obesity_by_age_group)
 p1
 ```
 
-@tbl-obe_sex presents a comparison of obesity prevalence between females and males in Scotland, revealing a marginal difference between the sexes. The obesity rate for females stands at 29.80659%, which is just 0.4% higher than the rate for males, which is 29.36790%. This is visually represented in @fig-bar_sex, where the bar corresponding to females is slightly taller than that for males, indicating this small but noticeable difference. The graph demonstrates that obesity is a significant health issue for both females and males in Scotland, with both experiencing high prevalence rates.
+The @tbl-obe_sex shows a slight disparity in obesity rates between genders in Scotland, with females at 29.80659% and males slightly lower at 29.36790%. This minor difference is visually depicted in @fig-bar_sex, where the female bar is marginally taller than the male bar, underscoring the small yet apparent gap. The graph illustrates that obesity is a substantial health concern for both sexes, indicating high prevalence rates across genders.
 
 ```{r}
 #| echo: false
-#| label: tbl-obe_sex
-#| tbl-cap: Obesity percentage table by gender
+##| label: tbl-obe_sex
+##| tbl-cap: Obesity percentage table by gender
 obesity_by_sex <- data %>%
   group_by(Sex) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_sex)
+#kable(obesity_by_sex)
 ```
 
 ```{r}
@@ -247,16 +242,17 @@ kable(obesity_by_sex)
 p2
 ```
 
-@tbl-obe_edu and @fig-bar_edu illustrate the relationship between educational attainment and obesity prevalence in Scotland. The data indicates a trend where obesity prevalence decreases with higher levels of education. Individuals with no qualifications have the highest obesity rate at 36.46659%, while those with a degree or higher have the lowest at 24.77144%. This pattern suggests that educational level may be inversely related to the likelihood of being obese.
+
+The @fig-bar_edu display a trend where obesity rates in Scotland decrease with increasing educational levels, from the highest rate among those without qualifications (36.46659%) to the lowest in individuals with degrees or higher (24.77144%), suggesting an inverse correlation between education and obesity.
 
 ```{r}
 #| echo: false
-#| label: tbl-obe_edu
-#| tbl-cap:  Obesity percentage table by education
+##| label: tbl-obe_edu
+##| tbl-cap:  Obesity percentage table by education
 obesity_by_education <- data %>%
   group_by(Education) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_education)
+#kable(obesity_by_education)
 ```
 
 ```{r}
@@ -272,16 +268,16 @@ kable(obesity_by_education)
 p3
 ```
 
-@tbl-ob_veg and @fig-bar_Veg explore the obesity prevalence in Scotland with respect to vegetarianism. From the information provided, individuals who do not follow a vegetarian diet have a higher obesity percentage, recorded at 32.06191%. In contrast, those who identify as vegetarian have a lower obesity percentage, at 28.93873%. This is visually represented in @fig-bar_Veg, where the bar corresponding to non-vegetarians is notably higher than that for vegetarians.
+The @fig-bar_Veg show that in Scotland, non-vegetarians have a higher obesity rate (32.06191%) compared to vegetarians (28.93873%), with the bar for non-vegetarians visibly taller in the graph. This suggests a correlation between diet choice and obesity prevalence.
 
 ```{r}
 #| echo: false
-#| label: tbl-ob_veg
-#| tbl-cap:  Obesity percentage table by vegetarian
+##| label: tbl-ob_veg
+##| tbl-cap:  Obesity percentage table by vegetarian
 obesity_by_veg <- data %>%
   group_by(Veg) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_veg)
+#kable(obesity_by_veg)
 ```
 
 ```{r}
@@ -298,16 +294,16 @@ kable(obesity_by_veg)
 p4
 ```
 
-@tbl-ob_fruit and @fig-bar_Fruit, which address fruit consumption, present a more nuanced picture. The obesity percentage for individuals who do not consume fruit is at 29.36099%, while the percentage for those who eat fruit is at 29.72168%. This difference is minor and, unlike the vegetarianism comparison, does not suggest a clear trend; the bars in the graph are almost equal in height. This lack of significant disparity could imply that fruit consumption, in isolation, does not have a strong correlation with obesity prevalence, or it could reflect that the amount and type of fruit consumed, as well as other dietary and lifestyle factors, play a role in the complex relationship with obesity.
+The @fig-bar_Fruit illustrate a slight difference in obesity rates between fruit consumers (29.72168%) and non-consumers (29.36099%), with nearly equal bar heights in the graph. This suggests a minimal impact of fruit consumption on obesity prevalence, highlighting the complex interplay of dietary and lifestyle factors in determining obesity.
 
 ```{r}
 #| echo: false
-#| label: tbl-ob_fruit
-#| tbl-cap:  Obesity percentage table by fruit
+##| label: tbl-ob_fruit
+##| tbl-cap:  Obesity percentage table by fruit
 obesity_by_fruit <- data %>%
   group_by(Fruit) %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-kable(obesity_by_fruit)
+#kable(obesity_by_fruit)
 ```
 
 ```{r}
