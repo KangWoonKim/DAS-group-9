@@ -109,7 +109,7 @@ obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), na
 ```{r}
 #| echo: false
 #| fig-cap: Scotland's Obesity prevalence over the factors
-#| label: fig-bar
+#| label: fig-factors
 #| fig-align: center
 #| message: false
 #| warning: false
@@ -163,10 +163,11 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
        y = "Percentage (%)",
        fill = "Obesity Status")
 
+grid.arrange(p1,p2,p3,p4,p5, ncol = 2)
 
 ```
 
-The @fig-line_year data indicates minor fluctuations in Scotland's obesity rates from 2008 to 2012, with a notable peak at 30.47% in 2010. The @fig-line_year graph underscores this trend, showcasing the temporary surge in 2010 against a backdrop of overall stability.
+The @fig-line_year data indicates minor fluctuations in Scotland's obesity rates from 2008 to 2012, with a notable peak at 30.47% in 2010. The graph underscores this trend, showcasing the temporary surge in 2010 against a backdrop of overall stability.
 
 ```{r}
 #| echo: false
@@ -192,7 +193,7 @@ ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
           )
 ```
 
-The @fig-bar_age indicate a correlation between age and obesity prevalence in Scotland, showing an increase in obesity rates with age, peaking at 35.9% among those aged 60-70. This pattern highlights this age group as having the highest obesity proportion. Beyond this peak, obesity percentages decline with further age increase, with individuals aged 90 and above exhibiting the lowest rate at 9.52%.
+The @fig-factors indicate a correlation between age and obesity prevalence in Scotland, showing an increase in obesity rates with age, peaking at 35.9% among those aged 60-70. This pattern highlights this age group as having the highest obesity proportion. Beyond this peak, obesity percentages decline with further age increase, with individuals aged 90 and above exhibiting the lowest rate at 9.52%.
 ```{r}
 #| echo: false
 ##| label: tbl-obe_Age
@@ -217,7 +218,7 @@ obesity_by_age_group <- data %>%
 p1
 ```
 
-The @tbl-obe_sex shows a slight disparity in obesity rates between genders in Scotland, with females at 29.80659% and males slightly lower at 29.36790%. This minor difference is visually depicted in @fig-bar_sex, where the female bar is marginally taller than the male bar, underscoring the small yet apparent gap. The graph illustrates that obesity is a substantial health concern for both sexes, indicating high prevalence rates across genders.
+The @fig-factors shows a slight disparity in obesity rates between genders in Scotland, with females at 29.80659% and males slightly lower at 29.36790%. This minor difference is visually depicted in the barchart, where the female bar is marginally taller than the male bar, underscoring the small yet apparent gap. The graph illustrates that obesity is a substantial health concern for both sexes, indicating high prevalence rates across genders.
 
 ```{r}
 #| echo: false
@@ -239,11 +240,10 @@ obesity_by_sex <- data %>%
 #| message: false
 #| warning: false
 
-p2
 ```
 
 
-The @fig-bar_edu display a trend where obesity rates in Scotland decrease with increasing educational levels, from the highest rate among those without qualifications (36.46659%) to the lowest in individuals with degrees or higher (24.77144%), suggesting an inverse correlation between education and obesity.
+The @fig-factors display a trend where obesity rates in Scotland decrease with increasing educational levels, from the highest rate among those without qualifications (36.46659%) to the lowest in individuals with degrees or higher (24.77144%), suggesting an inverse correlation between education and obesity.
 
 ```{r}
 #| echo: false
@@ -265,10 +265,9 @@ obesity_by_education <- data %>%
 #| message: false
 #| warning: false
 
-p3
 ```
 
-The @fig-bar_Veg show that in Scotland, non-vegetarians have a higher obesity rate (32.06191%) compared to vegetarians (28.93873%), with the bar for non-vegetarians visibly taller in the graph. This suggests a correlation between diet choice and obesity prevalence.
+The @fig-factors show that in Scotland, non-vegetarians have a higher obesity rate (32.06191%) compared to vegetarians (28.93873%), with the bar for non-vegetarians visibly taller in the graph. This suggests a correlation between diet choice and obesity prevalence.
 
 ```{r}
 #| echo: false
@@ -290,11 +289,9 @@ obesity_by_veg <- data %>%
 #| message: false
 #| warning: false
 
-
-p4
 ```
 
-The @fig-bar_Fruit illustrate a slight difference in obesity rates between fruit consumers (29.72168%) and non-consumers (29.36099%), with nearly equal bar heights in the graph. This suggests a minimal impact of fruit consumption on obesity prevalence, highlighting the complex interplay of dietary and lifestyle factors in determining obesity.
+The @fig-factors illustrate a slight difference in obesity rates between fruit consumers (29.72168%) and non-consumers (29.36099%), with nearly equal bar heights in the graph. This suggests a minimal impact of fruit consumption on obesity prevalence, highlighting the complex interplay of dietary and lifestyle factors in determining obesity.
 
 ```{r}
 #| echo: false
@@ -316,7 +313,6 @@ obesity_by_fruit <- data %>%
 #| message: false
 #| warning: false
 
-p5
 ```
 
 # Formal data analysis {#sec-fda}
