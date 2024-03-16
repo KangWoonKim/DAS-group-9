@@ -214,6 +214,8 @@ kable(obesity_by_age_group)
 #| fig-cap: Percentage of obese people in Scotland by age group
 #| label: fig-bar_age
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 #| message: false
 #| warning: false
 
@@ -237,6 +239,8 @@ kable(obesity_by_sex)
 #| fig-cap: Percentage of obese people in Scotland by Gender
 #| label: fig-bar_sex
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 #| message: false
 #| warning: false
 
@@ -260,6 +264,8 @@ kable(obesity_by_education)
 #| fig-cap: Percentage of obese people in Scotland by Education
 #| label: fig-bar_edu
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 #| message: false
 #| warning: false
 
@@ -283,6 +289,8 @@ kable(obesity_by_veg)
 #| fig-cap: Percentage of obese people in Scotland by Vegetarian
 #| label: fig-bar_Veg
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 #| message: false
 #| warning: false
 
@@ -306,6 +314,8 @@ kable(obesity_by_fruit)
 #| echo: false
 #| fig-cap: Percentage of obese people in Scotland by Fruit
 #| label: fig-bar_Fruit
+#| fig-width: 4
+#| fig-height: 3
 #| fig-align: center
 #| message: false
 #| warning: false
@@ -317,7 +327,9 @@ p5
 
 ## Prevalence of obesity from 2008 to 2012
 
-Next, we formally analyse the data by considering each objectives in turn. Firstly, The logistic regression model for obesity prevalence from 2008 to 2012 which will be fitted is given below : $$
+Next, we formally analyse the data by considering each objectives in turn. Firstly, The logistic regression model for obesity prevalence from 2008 to 2012 which will be fitted is given below : 
+
+$$
 \ \log\left(\frac{p_i}{1-p_i}\right) = \beta_0 + \beta_1 Year(x) +  \epsilon, ~~\epsilon \sim N(0, \sigma^2)\\
 i~=~1,\cdot\cdot\cdot~,25224
 $$
@@ -362,6 +374,7 @@ kable(dataframe1, row.names = FALSE)
 
 The model was established by including an array of independent variables such as age, sex, various educational levels, and dietary habits encompassing vegetable and fruit intake. This logistic regression model was selected due to the binary nature of the dependent variable---obesity, categorized as 'obese_yes' or 'obese_no'. The model sought to express the log-odds of the probability of being obese as a linear combination of the predictors, as illustrated by the logistic function:
 
+
 $$
 \ \log\left(\frac{p_i}{1-p_i}\right) = \beta_0 + \beta_1 Age(x_1) + \beta_2 Sex(x_2) + \beta_3 Education(x_3)\\+\beta_4Veg(x_4) + \beta_5 Fruit(x_5) + \epsilon, ~~\epsilon \sim N(0, \sigma^2)\\ i~=~1,\cdot\cdot\cdot~,25224
 $$
@@ -379,6 +392,7 @@ where
 -   $\sigma^2$ denotes variance
 
 we can fit the logistic regression model as follows @tbl-regmodel1:
+
 
 ```{r}
 #| echo: false
@@ -411,12 +425,9 @@ Upon evaluation of the `model_factors`, `Sex (Male)` and `Fruit` consumption wer
 
 
 AIC <- stepAIC(model_factors)
-
 ```
 
-To evaluate the goodness of fit for the logistic regression model, the stepwise selection procedure known as stepAIC was employed. This methodological approach applies both forward selection and backward elimination techniques to optimize the model based on the Akaike Information Criterion (AIC). The stepAIC process iteratively adds and removes variables, assessing the impact of each variable on the AIC value. A lower AIC value generally indicates a better-fitting model, provided that it maintains a balance between goodness of fit and model simplicity.
-
-The application of stepAIC to the logistic regression model resulted in the exclusion of variables 'Sex' and 'Fruit' intake, as their presence did not contribute to a reduction in the AIC score, suggesting that their inclusion did not improve the model's predictive ability significantly. The final model, which excludes these variables, is considered to be more parsimonious and theoretically sound for predicting the probability of obesity in the studied population.
+To evaluate the goodness of fit for the logistic regression model, the stepwise selection procedure known as stepAIC was employed. The application of stepAIC to the logistic regression model resulted in the exclusion of variables 'Sex' and 'Fruit' intake, as their presence did not contribute to a reduction in the AIC score, suggesting that their inclusion did not improve the model's predictive ability significantly. The final model, which excludes these variables, is considered to be more parsimonious and theoretically sound for predicting the probability of obesity in the studied population.
 
 ```{r}
 #| echo: false
@@ -431,24 +442,18 @@ dataframe <- data.frame(
 kable(dataframe, row.names = FALSE)
 ```
 
-The logistic regression equation derived from the model refinement using the stepAIC process, each independent variable's coefficient is integral to the calculation of the log-odds of the probability, p, of an individual being obese. The logistic function is represented as follows:: $$
+The logistic regression equation derived from the model refinement using the stepAIC process, each independent variable's coefficient is integral to the calculation of the log-odds of the probability, p, of an individual being obese. The logistic function is represented as follows:: 
+
+$$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
 
 where p is probability of being obese and 1-p is probability of being not obese. The model delineates that, there is a 1.2% escalation in the log-odds of obesity, affirming age as a significant factor, with other variables held constant.
 
-The educational background introduces a discernible stratification in obesity prediction. Individuals with higher education levels exhibit a 14.8% increase in the log-odds of obesity, whereas those with an HNC/D level present a 24% rise. The absence of education correlates with a pronounced 38.6% surge in the log-odds, whereas other unspecified educational backgrounds are associated with a 21.9% increase. Similarly, possessing standard grade education corresponds to a 30.5% increase in the log-odds of obesity.
-
-Interestingly, the negative coefficient for vegetable intake, indicates that consuming vegetables is associated with a decrease in the log-odds of being obese by 14%. This suggests that a diet including vegetables is inversely related to the likelihood of being obese.
-
-Further analysis and interpretation of this model should take into account the log-odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. (see @tbl-the_log_odds)
-
-The confidence intervals give a range of plausible values for the log-odds and odds ratios, with a 95% level of confidence. Narrow confidence intervals, as seen with age and vegetable intake, suggest a more precise estimate, while wider intervals suggest greater uncertainty. In our data, all intervals do not cross 0 for log-odds ratios, which indicates that all predictors are statistically significant at the 95% confidence level. We can see these log-odds intervals visually in @fig-log_odds:
+Further analysis and interpretation of this model should take into account the log-odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. 
 
 ```{r}
 #| echo: false
-#| label: tbl-the_log_odds
-#| tbl-cap: Confidence interval of the Log Odds 
 
 mod.factors.coef.logodds <- AIC |>
   summary()|>
@@ -497,20 +502,6 @@ log_odds_ci <- data.frame(
   ci_up = c(Age.logodds.upper, Edu.higher.logodds.upper, Edu.HNC.logodds.upper, Edu.no.logodds.upper,Edu.other.logodds.upper, Edu.standard.logodds.upper, Veg.logodds.upper)
 )
 
-kable(log_odds_ci, col.names = c("Groups", "Log-odds", "confidence interval low boundary", "confidence interval upper boundary"), caption = "Confidence interval of the log odds", format="pipe", row.names = FALSE)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-log_odds
-#| fig-cap: Log odds of each parameter
-#| fig-align: center
-
-
-#plot_model(model_factors, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
-plot_model(AIC, show.values = TRUE, transform = NULL,title = "Log-Odds", show.p=FALSE, axis.lim = c(-0.2, 0.4))
 ```
 
 Then, the odds ratios and their corresponding 95% confidence intervals provide valuable insights into the factors associated with obesity. The confidence intervals for the odds ratios of all predictors do not encompass the value of 1 (see @tbl-the_odds and @fig-odds). This observation is critical as it implies that the odds of obesity are significantly different from the null hypothesis value (odds ratio = 1) for each predictor. Therefore, we can conclude with 95% certainty that age, various levels of education, and vegetable intake are statistically significant factors in the prediction of obesity within our model. Specifically, age and lower educational attainment are associated with increased odds of obesity, whereas vegetable intake is associated with decreased odds, underscoring the importance of these factors in public health interventions aimed at reducing obesity prevalence.
@@ -537,24 +528,19 @@ kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "conf
 #| label: fig-odds
 #| fig-cap: odds of each parameter
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 plot_model(AIC, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
 #plot_model(model_factors, show.values = TRUE,title = "Odds", show.p = FALSE,axis.lim = c(0.5, 2))
 ```
 
 For the results, the model aimed to predict probabilities of obesity was developed considering various factors, including 'Sex' and 'Fruit' consumption. However, upon evaluation, both 'Sex' and 'Fruit' were identified as statistically insignificant predictors within the model. This inclusion of insignificant factors could potentially lead to inaccuracies in the predicted probabilities of obesity. Therefore, we have omitted these variables, to enhance the accuracy and reliability of the obesity probability predictions.
 
-@tbl-prob shows the predicted probabilities of each factor, with each value indicating how the probability of obesity changes when either the variable increases one unit (for continuous variables) or the variable changes from 0 to 1 (i.e. yes to no) (for categorical variables). From this, we can see that for each one year increase to the `Age` variable, the probability of obesity being present increases to 0.5029 (provided all other variables remain the same), this is close to 0.5 so `Age` does not seem to be too important in predicting whether obesity is present or not. Each of the `Education` variables are above 0.5, implying when any one of these is "true", the probability that someone has obesity increases, with no education being the strongest indicator of obesity overall. The `VegYes` variable has probability 0.4652 which implies that when a person consumes the recommended daily intake of vegetables, the probability of them having obesity becomes 0.4652, so they are more likely to not have obesity.
-
 ```{r}
 #| echo: false
-#| label: tbl-prob
-#| tbl-cap: Predicted probabilities of obesity by factors
-plog <- plogis(AIC$coefficients)
-dframe <- data.frame(
-     Groups = c( "Intercept", "Age","Education Higher","Education HNC/D", "Education no", "Education other", "Education Standard", "Vegetable intake"),
-     Probability = plog
- )
- kable(dframe, row.names = FALSE)
+#| label: tbl-pred_age
+#| tbl-cap: Predicted probabilities of obesity by Age
+
 ```
 
 @fig-pred_Age presents the predicted probabilities of obesity across different ages, indicating a nearly linear relationship. The graph shows a consistent increase in the probability of obesity as age advances, starting from around 20% in the youngest age group and ascending to close to 45% in the oldest age group represented. The trend line is almost straight, suggesting a steady rate of increase in the likelihood of obesity with age.
@@ -568,6 +554,8 @@ The shaded region around the trend line represents the confidence interval, whic
 #| label: fig-pred_Age
 #| fig-cap: Predicted probabilities of obesity by Age 
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 
 plot_model(AIC, type = "pred", terms= "Age[all]")
 ```
@@ -583,6 +571,8 @@ Additionally, an examination of the variance in the predicted probabilities reve
 #| label: fig-pred_Edu
 #| fig-cap: Predicted probabilities of obesity by Education
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 
 plot_model(AIC, type = "pred", terms= "Education")
 ```
@@ -600,6 +590,8 @@ This visual data suggests a potential inverse relationship between vegetable con
 #| label: fig-pred_Veg
 #| fig-cap: Predicted probabilities of obesity by Veg
 #| fig-align: center
+#| fig-width: 4
+#| fig-height: 3
 
 plot_model(AIC, type = "pred", terms = "Veg")
 ```
