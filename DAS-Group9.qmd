@@ -1,5 +1,5 @@
 ---
-title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys of 2008 and 2012"
+title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys"
 author: "Group 9 (2718740K Kyle Kim)"
 number-sections: true 
 format: 
@@ -7,7 +7,7 @@ format:
     embed-resources: true
     code-tools: true
   pdf: 
-    fontsize: 11pt
+    fontsize: 10pt
 editor_options: 
   chunk_output_type: console
 ---
@@ -215,7 +215,6 @@ obesity_by_age_group <- data %>%
 #| message: false
 #| warning: false
 
-p1
 ```
 
 The @fig-factors shows a slight disparity in obesity rates between genders in Scotland, with females at 29.80659% and males slightly lower at 29.36790%. This minor difference is visually depicted in the barchart, where the female bar is marginally taller than the male bar, underscoring the small yet apparent gap. The graph illustrates that obesity is a substantial health concern for both sexes, indicating high prevalence rates across genders.
@@ -388,8 +387,8 @@ we can fit the logistic regression model as follows @tbl-regmodel1:
 
 ```{r}
 #| echo: false
-#| label: tbl-regmodel1
-#| tbl-cap: Estimates of the regression model coefficients.
+##| label: tbl-regmodel1
+##| tbl-cap: Estimates of the regression model coefficients.
 
 obesity_by_factors <- data |>
   dplyr::select(Obese, Age, Sex, Education, Veg, Fruit)
@@ -405,7 +404,6 @@ dataframeone <- data.frame(
   pvalues = summary(model_factors)$coefficients[,4]
 )
 
-kable(dataframeone, row.names = FALSE)
 
 ```
 
@@ -439,10 +437,7 @@ The logistic regression equation derived from the model refinement using the ste
 $$
 \ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
-
-where p is probability of being obese and 1-p is probability of being not obese. The model delineates that, there is a 1.2% escalation in the log-odds of obesity, affirming age as a significant factor, with other variables held constant.
-
-Further analysis and interpretation of this model should take into account the log-odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. 
+Further analysis and interpretation of this model should take into account the odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. 
 
 ```{r}
 #| echo: false
@@ -510,7 +505,7 @@ odds_ci <- data.frame(
   ci_up = c(exp(Age.logodds.upper), exp(Edu.higher.logodds.upper), exp(Edu.HNC.logodds.upper), exp(Edu.no.logodds.upper),exp(Edu.other.logodds.upper), exp(Edu.standard.logodds.upper), exp(Veg.logodds.upper))
 )
 
-kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the odds", format="pipe")
+#kable(odds_ci, col.names = c("Groups", "confidence interval low boundary", "confidence interval uppter boundary"), caption = "Confidence interval of the odds", format="pipe")
 ```
 
 ```{r}
@@ -535,7 +530,7 @@ For the results, the model aimed to predict probabilities of obesity was develop
 
 ```
 
-@fig-pred_Age presents the predicted probabilities of obesity across different ages, indicating a nearly linear relationship. The graph shows a consistent increase in the probability of obesity as age advances, starting from around 20% in the youngest age group and ascending to close to 45% in the oldest age group represented. The trend line is almost straight, suggesting a steady rate of increase in the likelihood of obesity with age.
+@fig-pred_Factors presents the predicted probabilities of obesity across different ages, indicating a nearly linear relationship. The graph shows a consistent increase in the probability of obesity as age advances, starting from around 20% in the youngest age group and ascending to close to 45% in the oldest age group represented. The trend line is almost straight, suggesting a steady rate of increase in the likelihood of obesity with age.
 
 The shaded region around the trend line represents the confidence interval, which exhibits a slight increase in width as age progresses. This suggests a small increase in uncertainty of the predictions for the older age groups. Nonetheless, the relatively uniform width of the confidence interval across the age spectrum implies that the variance in the predicted probabilities of obesity does not drastically change with age.
 
@@ -543,16 +538,19 @@ The shaded region around the trend line represents the confidence interval, whic
 #| echo: false
 #| message: false
 #| warning: false
-#| label: fig-pred_Age
-#| fig-cap: Predicted probabilities of obesity by Age 
+#| label: fig-pred_Factors
+#| fig-cap: Predicted probabilities of obesity
 #| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
 
-plot_model(AIC, type = "pred", terms= "Age[all]")
+
+q1<-plot_model(AIC, type = "pred", terms= "Age[all]")
+q2<-plot_model(AIC, type = "pred", terms= "Education")
+q3<-plot_model(AIC, type = "pred", terms = "Veg")
+
+grid.arrange(q1,q2,q3, nrow=1)
 ```
 
-@fig-pred_Edu presents a statistical analysis on the correlation between educational levels and the projected likelihood of obesity. The data suggests a distinct inverse relationship between educational attainment and the propensity for obesity. Specifically, the graph indicates that the segment of the population without any educational qualifications registers the highest mean predicted probability for obesity. In stark contrast, individuals who have obtained a degree or higher education are attributed with the lowest mean predicted probability of being classified as obese.
+@fig-pred_Factors presents a statistical analysis on the correlation between educational levels and the projected likelihood of obesity. The data suggests a distinct inverse relationship between educational attainment and the propensity for obesity. Specifically, the graph indicates that the segment of the population without any educational qualifications registers the highest mean predicted probability for obesity. In stark contrast, individuals who have obtained a degree or higher education are attributed with the lowest mean predicted probability of being classified as obese.
 
 Additionally, an examination of the variance in the predicted probabilities reveals significant heterogeneity within the 'Other school level' category, which surpasses the uniformity observed in both the 'No qualifications' and 'Degree or higher' categories. This variability may suggest a complex interplay between education and other socio-economic factors that influence obesity rates. These findings highlight the importance of educational attainment in public health strategies aimed at combating obesity.
 
@@ -566,10 +564,10 @@ Additionally, an examination of the variance in the predicted probabilities reve
 #| fig-width: 4
 #| fig-height: 3
 
-plot_model(AIC, type = "pred", terms= "Education")
+
 ```
 
-@fig-pred_Veg illustrates the predicted probabilities of obesity with respect to vegetable consumption, as indicated by the binary categories 'Yes' and 'No'. The graph suggests that individuals who do not consume vegetables have a higher predicted probability of obesity, marked by a probability just over 28%. In contrast, the predicted probability for obesity among those who do consume vegetables is significantly lower, indicated by a probability just under 25%.
+@fig-pred_Factors illustrates the predicted probabilities of obesity with respect to vegetable consumption, as indicated by the binary categories 'Yes' and 'No'. The graph suggests that individuals who do not consume vegetables have a higher predicted probability of obesity, marked by a probability just over 28%. In contrast, the predicted probability for obesity among those who do consume vegetables is significantly lower, indicated by a probability just under 25%.
 
 The error bars, which represent the confidence intervals, are notably longer for the 'No' category, implying greater uncertainty in the prediction for individuals who do not consume vegetables. The shorter error bars for the 'Yes' category suggest more confidence in the prediction for individuals who do consume vegetables.
 
@@ -585,7 +583,7 @@ This visual data suggests a potential inverse relationship between vegetable con
 #| fig-width: 4
 #| fig-height: 3
 
-plot_model(AIC, type = "pred", terms = "Veg")
+
 ```
 
 # Conclusions {#sec-ccls}
