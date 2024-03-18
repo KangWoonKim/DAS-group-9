@@ -488,6 +488,7 @@ q3
 #| warning: false
 #| fig-height: 2
 #| label: fig-pred_Fators
+#| fig-width: 7.25
 #| fig-cap: Predicted probability by Education
 #| fig-align: center
 custom_labels <- c("Degree", "Higher grade", "HNC/D","None","Other", "Standard grade")
