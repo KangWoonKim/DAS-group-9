@@ -479,53 +479,46 @@ The shaded region around the trend line represents the confidence interval, whic
 #| echo: false
 #| message: false
 #| warning: false
+#| layout-ncol: 2
+#| fig-height: 2
 #| label: fig-pred_Factors
-#| fig-cap: Predicted probabilities of obesity
+#| fig-cap: 
+#| - Predicted probability by Age
+#| - Predicted probability by Veg
 #| fig-align: center
 
 
 q1<-plot_model(AIC, type = "pred", terms= "Age[all]")
-q2<-plot_model(AIC, type = "pred", terms= "Education")
+q2<-plot_model(AIC, type = "pred", terms= "Education", value.labels = c("Degree", "Higher grade", "HNC/D","None","Other", "Standard grade"))
 q3<-plot_model(AIC, type = "pred", terms = "Veg")
 
-grid.arrange(q1,q2,q3, nrow=1)
+q1
+q3
+
+```
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-height: 2
+#| label: fig-pred_Fators
+#| fig-cap: Predicted probability by Education
+#| fig-align: center
+custom_labels <- c("Degree", "Higher grade", "HNC/D","None","Other", "Standard grade")
+q2<-plot_model(AIC, type = "pred", terms= "Education", show.values = TRUE, value.labels = list(variable_name = custom_labels))
+q2
+
 ```
 
 @fig-pred_Factors presents a statistical analysis on the correlation between educational levels and the projected likelihood of obesity. The data suggests a distinct inverse relationship between educational attainment and the propensity for obesity. Specifically, the graph indicates that the segment of the population without any educational qualifications registers the highest mean predicted probability for obesity. In stark contrast, individuals who have obtained a degree or higher education are attributed with the lowest mean predicted probability of being classified as obese.
 
 Additionally, an examination of the variance in the predicted probabilities reveals significant heterogeneity within the 'Other school level' category, which surpasses the uniformity observed in both the 'No qualifications' and 'Degree or higher' categories. This variability may suggest a complex interplay between education and other socio-economic factors that influence obesity rates. These findings highlight the importance of educational attainment in public health strategies aimed at combating obesity.
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-pred_Edu
-#| fig-cap: Predicted probabilities of obesity by Education
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-
-
-```
-
 @fig-pred_Factors illustrates the predicted probabilities of obesity with respect to vegetable consumption, as indicated by the binary categories 'Yes' and 'No'. The graph suggests that individuals who do not consume vegetables have a higher predicted probability of obesity, marked by a probability just over 28%. In contrast, the predicted probability for obesity among those who do consume vegetables is significantly lower, indicated by a probability just under 25%.
 
 The error bars, which represent the confidence intervals, are notably longer for the 'No' category, implying greater uncertainty in the prediction for individuals who do not consume vegetables. The shorter error bars for the 'Yes' category suggest more confidence in the prediction for individuals who do consume vegetables.
 
 This visual data suggests a potential inverse relationship between vegetable consumption and the likelihood of obesity, indicating that vegetable intake may be associated with a lower probability of being obese.
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-pred_Veg
-#| fig-cap: Predicted probabilities of obesity by Veg
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-
-
-```
 
 # Conclusions {#sec-ccls}
 
