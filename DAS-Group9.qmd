@@ -364,7 +364,10 @@ kable(dataframe, row.names = FALSE)
 The logistic regression equation derived from the model refinement using the stepAIC process, each independent variable's coefficient is integral to the calculation of the log-odds of the probability, p, of an individual being obese. The logistic function is represented as follows:
 
 $$
-\ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}+0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
+\ \log\left(\frac{p}{1-p}\right) = -1.556 + 0.012 Age+ 0.148Education_{Higher}+0.240Education_{HNC/D}\\+0.386Education_{No}
+$$
+$$
++0.219Education_{Other}+0.305Education_{Standard}-0.140Veg + \epsilon, ~~\epsilon \sim N(0, \sigma^2)
 $$
 Further analysis and interpretation of this model should take into account the odds 95% confidence intervals for these coefficients to assess the precision of the estimates. These intervals are essential for understanding the range within which the true value of the coefficients is likely to lie, with a 95% level of confidence. 
 
