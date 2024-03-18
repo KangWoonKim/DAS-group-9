@@ -106,12 +106,42 @@ obesity_Fruit <- data %>%
             Obese_No = sum(Obese == "No") / n() * 100)
 obesity_Fruit_long <- pivot_longer(obesity_Fruit, c("Obese_Yes", "Obese_No"), names_to = "Obesity", values_to = "Percentage")
 ```
+The @fig-line_year data indicates minor fluctuations in Scotland's obesity rates from 2008 to 2012, with a notable peak at 30.47% in 2010. The graph underscores this trend, showcasing the temporary surge in 2010 against a backdrop of overall stability.
 
 ```{r}
 #| echo: false
-#| fig-cap: Scotland's Obesity prevalence over the factors
-#| label: fig-factors
-#| 
+##| label: tbl-obe_year
+##| tbl-cap: prevalence of obesity over the year 2008 - 2012
+obesity_by_year <- data %>%
+  group_by(Year) %>%
+  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
+#kable(obesity_by_year)
+```
+
+```{r}
+#| warning: false
+#| message: false 
+#| echo: false 
+#| fig-cap: Percentage of obese people in Scotland by year
+#| label: fig-line_year
+ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
+ geom_line()+
+     labs(title = "Obesity prevalence in Scotland by Year",
+          x = "Year",
+          y = "Percentage of Obesity (%)",
+          )
+```
+```{r}
+#| echo: false
+#| fig-cap: 
+#| - Obesity by Age
+#| - Obesity by Sex
+#| - Obesity by Education
+#| - Obesity by Veg 
+#| - Obesity by Fruit
+#| label: c(figoage, figosex, figoedu, figoveg, figofru)
+#| layout-ncol: 2
+#| fig-height: 2
 #| fig-align: center
 #| message: false
 #| warning: false
@@ -165,36 +195,14 @@ p5<-ggplot(obesity_Fruit_long, aes(x = Fruit, y = Percentage, fill = Obesity)) +
        y = "Percentage (%)",
        fill = "Obesity Status")
 
-grid.arrange(p1,p2,p3,p4,p5, ncol = 2)
+p1
+p2
+p3
+p4
+p5
 
 ```
-
-The @fig-line_year data indicates minor fluctuations in Scotland's obesity rates from 2008 to 2012, with a notable peak at 30.47% in 2010. The graph underscores this trend, showcasing the temporary surge in 2010 against a backdrop of overall stability.
-
-```{r}
-#| echo: false
-##| label: tbl-obe_year
-##| tbl-cap: prevalence of obesity over the year 2008 - 2012
-obesity_by_year <- data %>%
-  group_by(Year) %>%
-  summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
-#kable(obesity_by_year)
-```
-
-```{r}
-#| warning: false
-#| message: false 
-#| echo: false 
-#| fig-cap: Percentage of obese people in Scotland by year
-#| label: fig-line_year
-ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
- geom_line()+
-     labs(title = "Obesity prevalence in Scotland by Year",
-          x = "Year",
-          y = "Percentage of Obesity (%)",
-          )
-```
-The @fig-factors plots show Scotland's obesity prevalence over each factor. The top left plot indicates a correlation between age and obesity prevalence in Scotland, showing an increase in obesity rates with age, peaking at 35.9% among those aged 60-70, after this point the obesity prevalence drops off. The top right plot shows a slight disparity in obesity rates between genders in Scotland, with females at 29.8% and males slightly lower at 29.4%, indicating obesity is an issue for both sexes. The middle left plot displays a trend where obesity rates in Scotland decrease with increasing educational levels, from the highest rate among those without qualifications (36.5%) to the lowest in individuals with degrees or higher (24.8%), suggesting an inverse correlation between education and obesity. The middle right plot shows that those who do not consume the recommended daily intake of vegetables have a higher obesity rate (32.1%) than those who do (28.9%). The bottom plot illustrates a slight difference in obesity rates between fruit consumers (29.7%) and non-consumers (29.4%), indicating a minimal impact of fruit consumption on obesity prevalence.
+@figoage indicates a correlation between age and obesity prevalence in Scotland, showing an increase in obesity rates with age, peaking at 35.9% among those aged 60-70, after this point the obesity prevalence drops off. @figosex shows a slight disparity in obesity rates between genders in Scotland, with females at 29.8% and males slightly lower at 29.4%, indicating obesity is an issue for both sexes. @figoedu displays a trend where obesity rates in Scotland decrease with increasing educational levels, from the highest rate among those without qualifications (36.5%) to the lowest in individuals with degrees or higher (24.8%), suggesting an inverse correlation between education and obesity. @figoveg shows that those who do not consume the recommended daily intake of vegetables have a higher obesity rate (32.1%) than those who do (28.9%). @figofru illustrates a slight difference in obesity rates between fruit consumers (29.7%) and non-consumers (29.4%), indicating a minimal impact of fruit consumption on obesity prevalence.
 
 ```{r}
 #| echo: false
@@ -209,19 +217,6 @@ obesity_by_age_group <- data %>%
 
 ```{r}
 #| echo: false
-#| fig-cap: Percentage of obese people in Scotland by age group
-#| label: fig-bar_age
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-#| message: false
-#| warning: false
-
-```
-
-
-```{r}
-#| echo: false
 ##| label: tbl-obe_sex
 ##| tbl-cap: Obesity percentage table by gender
 obesity_by_sex <- data %>%
@@ -232,19 +227,6 @@ obesity_by_sex <- data %>%
 
 ```{r}
 #| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Gender
-#| label: fig-bar_sex
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-#| message: false
-#| warning: false
-
-```
-
-
-```{r}
-#| echo: false
 ##| label: tbl-obe_edu
 ##| tbl-cap:  Obesity percentage table by education
 obesity_by_education <- data %>%
@@ -252,20 +234,6 @@ obesity_by_education <- data %>%
   summarise(Obesity_Percentage = mean(Obese == "Yes") * 100)
 #kable(obesity_by_education)
 ```
-
-```{r}
-#| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Education
-#| label: fig-bar_edu
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-#| message: false
-#| warning: false
-
-```
-
-
 ```{r}
 #| echo: false
 ##| label: tbl-ob_veg
@@ -278,19 +246,6 @@ obesity_by_veg <- data %>%
 
 ```{r}
 #| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Vegetarian
-#| label: fig-bar_Veg
-#| fig-align: center
-#| fig-width: 4
-#| fig-height: 3
-#| message: false
-#| warning: false
-
-```
-
-
-```{r}
-#| echo: false
 ##| label: tbl-ob_fruit
 ##| tbl-cap:  Obesity percentage table by fruit
 obesity_by_fruit <- data %>%
@@ -299,17 +254,6 @@ obesity_by_fruit <- data %>%
 #kable(obesity_by_fruit)
 ```
 
-```{r}
-#| echo: false
-#| fig-cap: Percentage of obese people in Scotland by Fruit
-#| label: fig-bar_Fruit
-#| fig-width: 4
-#| fig-height: 3
-#| fig-align: center
-#| message: false
-#| warning: false
-
-```
 
 # Formal data analysis {#sec-fda}
 
