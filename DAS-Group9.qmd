@@ -1,6 +1,5 @@
 ---
 title: "Obesity in Scotland in relation to factors included in the Scottish Health Surveys"
-author:
 subtitle: "Group 9 (2718740K Kyle Kim, 2559983C Rachel Crossan, 2572501G Matthew Gillen, 2652154K Scott Kerr)"
 number-sections: true 
 format: 
@@ -122,6 +121,7 @@ obesity_by_year <- data %>%
 #| warning: false
 #| message: false 
 #| echo: false 
+#| fig-height: 2
 #| fig-cap: Percentage of obese people in Scotland by year
 #| label: fig-line_year
 ggplot(data=obesity_prevalence, mapping=aes(x=Year, y=Obese_Yes))+
