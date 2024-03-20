@@ -175,7 +175,7 @@ p3<- ggplot(obesity_Edu_long, aes(x = Education, y = Percentage, fill = Obesity)
        x = "Education",
        y = "Percentage (%)",
        fill = "Obesity Status")+
-  theme(axis.text.x = element_text(size = 2))
+  theme(axis.text.x = element_text(size = 6.5))
 
 # Plot 
 p4<-ggplot(obesity_Veg_long, aes(x = Veg, y = Percentage, fill = Obesity)) +
